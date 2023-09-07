@@ -4,8 +4,7 @@ public class tester
 {
     public static void main(String[] args) throws IOException
     {
-        Blob_and_Index testerr = new Blob_and_Index();
-        testerr.Blob("testerText");
+        Blob blobTester = new Blob("testerText");
     }
     
 }
