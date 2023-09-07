@@ -6,6 +6,7 @@ import java.io.IOException;
 public class Index 
 {
     Boolean fileExists;
+    File f;
     public Index() throws IOException //should NOT put an entry twice
     {
         initialize();
@@ -15,11 +16,12 @@ public class Index
         bw.close();
     }
 
-    public void initialize()
+    public void initialize() throws IOException
     {
         fileExists = true;
         new File("objects").mkdirs();
 
-
+        f = new File("index");
+        f.createNewFile();
     }
 }
