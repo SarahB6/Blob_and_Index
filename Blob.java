@@ -44,6 +44,7 @@ public class Blob
         return result;
     }
       
+    static final Path myPath = Paths.get("./objects/");
 
     public Blob(String fileName) throws IOException
     {
@@ -53,15 +54,14 @@ public class Blob
         {
             sb.append((char)ogReader.read());
         }
-        byte[] asBytes = sb.toString().getBytes();
-        //String newFileName = toSHA1(asBytes);
         ogReader.close();
 
-        String newFileName = Blob.encryptPassword(fileName);
-        System.out.print("FILE NAME: " + newFileName);
+        String newFileName = Blob.encryptPassword(sb.toString());
+        System.out.println("FILE NAME: " + newFileName); 
         //how do you save a file in the objects folder??
+        System.out.print("NAME: " + myPath+ "/" +newFileName);
         BufferedReader br = new BufferedReader(new BufferedReader(new FileReader(fileName))); 
-        BufferedWriter bw = new BufferedWriter(new FileWriter(newFileName));
+        BufferedWriter bw = new BufferedWriter(new FileWriter(myPath+ "/" + newFileName));
         while(br.ready())
 		{
             bw.write((char)br.read());
