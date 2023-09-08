@@ -6,18 +6,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 public class Index 
 {
-    private  Map <String, String> map = new HashMap<String, String>();
-    Boolean fileExists;
     File f;
-    public Index() throws IOException//should NOT put an entry twice (this is kinda hard)
+    public Index() throws IOException
     {
-        initialize();
     }
 
+    //checks if the file is already in the Index list
     public Boolean alrInIndex(String fileName) throws IOException
     {
         BufferedReader br = new BufferedReader(new FileReader("index"));
@@ -38,6 +35,7 @@ public class Index
         return false;
     }
 
+    //adds the file to the index if it doesn't already exist
     public void addFile(String fileName) throws IOException
     {
         BufferedWriter bw = new BufferedWriter(new FileWriter("index", true));
@@ -46,12 +44,12 @@ public class Index
         if(!alrInIndex(fileName)) //SHOULD IT BE CHECKING IF THE HASH IS THE SAME????
         {
             System.out.println(fileName + "does not alr exist");
-            map.put(fileName, SHA1_of_file);
             bw.write(fileName + " : " + SHA1_of_file + "\n");
         }
         bw.close();
     }
 
+    //removes file from the index list and objects folder
     public void removeFile(String fileName) throws IOException
     {
         if(alrInIndex(fileName))
@@ -77,14 +75,16 @@ public class Index
             
             bw.close();
             br.close();
+
+            File toRemove = new File("./objects/" + SHA1_of_file);
+            toRemove.delete();
+
         }
     }
 
     public void initialize() throws IOException
     {
-        fileExists = true;
         new File("objects").mkdirs();
-
         f = new File("index");
         f.createNewFile();
     }

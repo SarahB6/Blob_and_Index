@@ -11,9 +11,10 @@ import java.nio.file.*;
 
 public class Blob 
 { 
-    public String SHA1Name(String fileName) throws IOException
+    //codes the input and returns a sha
+    public String SHA1Name(String input) throws IOException
     {
-        BufferedReader ogReader= new BufferedReader(new BufferedReader(new FileReader(fileName))); 
+        BufferedReader ogReader= new BufferedReader(new BufferedReader(new FileReader(input))); 
         StringBuilder sb = new StringBuilder();
         while(ogReader.ready())
         {
@@ -42,6 +43,7 @@ public class Blob
         return sha1;
     }
 
+    //helper for above method
     private static String byteToHex(final byte[] hash)
     {
         Formatter formatter = new Formatter();
@@ -56,12 +58,13 @@ public class Blob
       
     static final Path myPath = Paths.get("./objects/");
 
+    //creates the Blob and saves it to the objects folder
     public Blob(String fileName) throws IOException
     {
 
         String newFileName = SHA1Name(fileName);
         BufferedReader br = new BufferedReader(new BufferedReader(new FileReader(fileName))); 
-        BufferedWriter bw = new BufferedWriter(new FileWriter(myPath+ "/" + newFileName));
+        BufferedWriter bw = new BufferedWriter(new FileWriter(myPath + "/" + newFileName));
         while(br.ready())
 		{
             bw.write((char)br.read());

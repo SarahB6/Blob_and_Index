@@ -4,12 +4,11 @@ public class tester
 {
     public static void main(String[] args) throws IOException
     {
-        Index indexTester = new Index();
-        indexTester.addFile("testerText");
-        System.out.println("FIRST:  "+ indexTester.alrInIndex("testerText"));
-        indexTester.addFile("testerTextTwo");
-        indexTester.addFile("testerTextTwo");
-        indexTester.removeFile("testerText");
+        Index i = new Index();
+        i.initialize();
+        i.addFile("testerText");
+        i.removeFile("testerText");
+        i.addFile("testerTextTwo");
     }
     
 }
