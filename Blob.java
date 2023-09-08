@@ -11,14 +11,24 @@ import java.nio.file.*;
 
 public class Blob 
 { 
-    private static String encryptPassword(String password)
+    public String SHA1Name(String fileName) throws IOException
     {
+        BufferedReader ogReader= new BufferedReader(new BufferedReader(new FileReader(fileName))); 
+        StringBuilder sb = new StringBuilder();
+        while(ogReader.ready())
+        {
+            sb.append((char)ogReader.read());
+        }
+        ogReader.close();
+
+        String dataAsString = sb.toString();
+
         String sha1 = "";
         try
         {
             MessageDigest crypt = MessageDigest.getInstance("SHA-1");
             crypt.reset();
-            crypt.update(password.getBytes("UTF-8"));
+            crypt.update(dataAsString.getBytes("UTF-8"));
             sha1 = byteToHex(crypt.digest());
         }
         catch(NoSuchAlgorithmException e)
@@ -48,18 +58,8 @@ public class Blob
 
     public Blob(String fileName) throws IOException
     {
-        BufferedReader ogReader= new BufferedReader(new BufferedReader(new FileReader(fileName))); 
-        StringBuilder sb = new StringBuilder();
-        while(ogReader.ready())
-        {
-            sb.append((char)ogReader.read());
-        }
-        ogReader.close();
 
-        String newFileName = Blob.encryptPassword(sb.toString());
-        System.out.println("FILE NAME: " + newFileName); 
-        //how do you save a file in the objects folder??
-        System.out.print("NAME: " + myPath+ "/" +newFileName);
+        String newFileName = SHA1Name(fileName);
         BufferedReader br = new BufferedReader(new BufferedReader(new FileReader(fileName))); 
         BufferedWriter bw = new BufferedWriter(new FileWriter(myPath+ "/" + newFileName));
         while(br.ready())
