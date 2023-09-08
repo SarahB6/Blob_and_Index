@@ -6,6 +6,10 @@ public class tester
     {
         Index indexTester = new Index();
         indexTester.addFile("testerText");
+        System.out.println("FIRST:  "+ indexTester.alrInIndex("testerText"));
+        System.out.println(indexTester.alrInIndex("testerTextTwo"));
+        indexTester.addFile("testerTextTwo");
+        System.out.println(indexTester.alrInIndex("testerTextTwo"));
         indexTester.addFile("testerTextTwo");
     }
     
