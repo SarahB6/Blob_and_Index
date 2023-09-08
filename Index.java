@@ -31,6 +31,7 @@ public class Index
             {
                 return true;
             }
+            currentString.setLength(0);
             
         }
         br.close();
@@ -53,7 +54,30 @@ public class Index
 
     public void removeFile(String fileName) throws IOException
     {
-
+        if(alrInIndex(fileName))
+        {
+            BufferedReader br = new BufferedReader(new FileReader("index"));
+            StringBuilder newIndex = new StringBuilder();
+            Blob currentBlob = new Blob(fileName);
+            String SHA1_of_file = currentBlob.SHA1Name(fileName);
+            StringBuilder currentString = new StringBuilder();
+            while(br.ready())
+            {
+                currentString.append(br.readLine());
+                if(currentString.indexOf(fileName + " : " + SHA1_of_file) == -1)
+                {
+                    newIndex.append(currentString + "\n");
+                }
+                currentString.setLength(0);
+                
+            }
+            BufferedWriter bw = new BufferedWriter(new FileWriter("index", false));
+            
+            bw.write(newIndex.toString());
+            
+            bw.close();
+            br.close();
+        }
     }
 
     public void initialize() throws IOException
