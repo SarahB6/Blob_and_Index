@@ -7,8 +7,11 @@ public class tester
         Index i = new Index();
         i.initialize();
         i.addFile("testerText");
+        i.addFile("testerText");
+        i.addFile("example.txt");
         i.removeFile("testerText");
-        i.addFile("testerTextTwo");
+        i.removeFile("example.txt");
+        
     }
     
 }

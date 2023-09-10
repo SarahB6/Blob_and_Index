@@ -87,5 +87,7 @@ public class Index
         new File("objects").mkdirs();
         f = new File("index");
         f.createNewFile();
+        BufferedWriter bw = new BufferedWriter(new FileWriter("index", false));
+        bw.close();
     }
 }
