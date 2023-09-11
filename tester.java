@@ -6,11 +6,11 @@ public class tester
     {
         Index i = new Index();
         i.initialize();
-        i.addFile("testerText");
-        i.addFile("testerText");
-        i.addFile("example.txt");
-        i.removeFile("testerText");
-        i.removeFile("example.txt");
+        i.addFile("Test1.txt");
+        i.addFile("Test2.txt");
+        i.removeFile("Test1.txt");
+        i.addFile("Test3.txt");
+        
         
     }
     

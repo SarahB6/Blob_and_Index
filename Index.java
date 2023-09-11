@@ -4,8 +4,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+
 
 public class Index 
 {
@@ -84,10 +83,20 @@ public class Index
 
     public void initialize() throws IOException
     {
-        new File("objects").mkdirs();
+        
+        File objectsFile = new File("objects");
+        if(objectsFile.exists())
+        {
+            objectsFile.delete();
+        }
+        objectsFile.mkdirs();
         f = new File("index");
+        if(f.exists())
+        {
+            f.delete();
+        }
         f.createNewFile();
-        BufferedWriter bw = new BufferedWriter(new FileWriter("index", false));
-        bw.close();
+        //BufferedWriter bw = new BufferedWriter(new FileWriter("index", false));
+        //bw.close();
     }
 }
