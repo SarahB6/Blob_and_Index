@@ -5,13 +5,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
 import java.util.HashMap;
-import java.util.Scanner;
 
 public class Tree {
     /*
@@ -69,7 +66,6 @@ public class Tree {
 
     public void save () throws IOException
     {
-        String myString;
         //File myFile = new File ("./objects/temp");
         //Scanner scanner = new Scanner(myFile);
         //String myString = scanner.useDelimiter("\\A").next();
@@ -78,25 +74,39 @@ public class Tree {
         FileWriter writer = new FileWriter ("./objects/temp");
         File myFile = new File("./objects/temp");
         PrintWriter out = new PrintWriter (writer);
+        int numDone = 0;
         for (String key : myMap.keySet ())
         {
             if (myMap.get (key).getType ().equals ("blob"))
             {
-                out.println ("blob : " + key + " : " + myMap.get (key).getFileName ());
+                if (numDone == myMap.size () - 1)
+                {
+                    out.print ("\nblob : " + key + " : " + myMap.get (key).getFileName ());
+                }
+                else
+                {
+                    out.println ("blob : " + key + " : " + myMap.get (key).getFileName ());
+                }
             }
             else
             {
-                out.println ("tree : " + key);
+                if (numDone == myMap.size () - 1)
+                {
+                    out.print ("tree : " + key);
+                }
+                else
+                {
+                    out.println ("tree : " + key);
+                }
             }
+            numDone++;
         }
         writer.close();
         out.close ();
+        //renaming file
         File file2 = new File ("./objects/" + SHA1Name ("./objects/temp"));
-        System.out.println (SHA1Name ("./objects/temp"));
         myFile.renameTo (file2);
-        
     }
-
     
     public void addToTree (String typeAndContent)
     {
@@ -110,13 +120,11 @@ public class Tree {
         }
     }
     
-
     public void removeLine (String SHA1)
     {
         myMap.remove (SHA1);
     }
     
-
     //codes the input and returns a sha
     public String SHA1Name(String input) throws IOException
     {
