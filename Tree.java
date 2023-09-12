@@ -29,7 +29,11 @@ public class Tree {
         {
             if (myMap.get (key).getType ().equals ("blob"))
             {
-                if (numDone == myMap.size () - 1)
+                if (myMap.size () == 1)
+                {
+                    out.print ("blob : " + key + " : " + myMap.get (key).getFileName ());
+                }
+                else if (numDone == myMap.size () - 1)
                 {
                     out.print ("\nblob : " + key + " : " + myMap.get (key).getFileName ());
                 }
@@ -40,9 +44,13 @@ public class Tree {
             }
             else
             {
-                if (numDone == myMap.size () - 1)
+                if (myMap.size () == 1)
                 {
                     out.print ("tree : " + key);
+                }
+                else if (numDone == myMap.size () - 1)
+                {
+                    out.print ("\ntree : " + key);
                 }
                 else
                 {
