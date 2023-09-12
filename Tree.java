@@ -11,51 +11,6 @@ import java.util.Formatter;
 import java.util.HashMap;
 
 public class Tree {
-    /*
-    File myFile;
-    String oldSHA1;
-
-    public Tree () throws IOException
-    {
-        myFile = new File("./oldFile");
-        myFile.createNewFile ();
-        //oldSHA1 = 
-        
-        myFile = new File("./oldFile");
-        myFile.createNewFile ();
-        FileWriter writer = new FileWriter("./oldFile",false);
-        PrintWriter out = new PrintWriter(writer);
-        out.print ("shmokeee");
-        writer.close ();
-        out.close ();
-        
-    }
-    
-
-    public void save () throws IOException
-    {
-        //Path oldFilePath = Paths.get ("./oldFile");
-        Scanner scanner = new Scanner(new File("./oldFile"));
-        String myString = scanner.useDelimiter("\\A").next();
-        scanner.close();
-        myFile = new File("./objects/temp");
-        myFile.createNewFile ();
-        FileWriter writer = new FileWriter("./objects/temp",false);
-        PrintWriter out = new PrintWriter(writer);
-        out.print (myString);
-        writer.close ();
-        out.close ();
-    }
-
-    public void addToTree (String typeAndCount)
-    {
-        
-    }
-
-    public void remove (String SHA1)
-    {
-
-    } */
     
     HashMap <String, TreeEntry> myMap;
 
@@ -66,11 +21,6 @@ public class Tree {
 
     public void save () throws IOException
     {
-        //File myFile = new File ("./objects/temp");
-        //Scanner scanner = new Scanner(myFile);
-        //String myString = scanner.useDelimiter("\\A").next();
-        //scanner.close();
-        //FileWriter writer = new FileWriter (new File ("./objects/" + SHA1Name(myString)));
         FileWriter writer = new FileWriter ("./objects/temp");
         File myFile = new File("./objects/temp");
         PrintWriter out = new PrintWriter (writer);
