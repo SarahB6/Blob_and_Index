@@ -98,9 +98,23 @@ public class Tree {
         }
     }
     
-    public void removeLine (String SHA1)
+    public void removeBlob (String fileName)
     {
-        myMap.remove (SHA1);
+        for (String key : myMap.keySet ())
+        {
+            if (myMap.get(key).getFileName ().equals(fileName))
+            {
+                myMap.remove(key);
+            }
+        }
+    }
+
+    public void removeTree (String SHA1)
+    {
+        if (myMap.get(SHA1).getType ().equals ("tree"))
+        {
+            myMap.remove(SHA1);
+        }
     }
     
     //codes the input and returns a sha
