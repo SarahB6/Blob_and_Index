@@ -80,7 +80,7 @@ public class GitTester
     @Test
     @DisplayName("[15] Test if adding a blob works.  5 for sha, 5 for file contents, 5 for correct location")
     void testCreateBlob() throws Exception {
-
+        Blob myBlob = null;
         try {
 
             // Manually create the files and folders before the 'testAddFile'
@@ -89,15 +89,27 @@ public class GitTester
             File myTesterText = new File ("myTesterText.txt");
             File myTesterText2 = new File ("myTesterText2.txt");
             File myTesterText3 = new File ("myTesterText3.txt");
-            
+            myTesterText.createNewFile();
+            myTesterText2.createNewFile();
+            myTesterText3.createNewFile();
 
+            
+            PrintWriter out = new PrintWriter("testerText");
+            out.print("this is some testertext!");
+            out.close();
+            PrintWriter out2 = new PrintWriter("testerText");
+            out2.print("this is some (2) testertext!");
+            out2.close();
+            PrintWriter out3 = new PrintWriter("testerText");
+            out3.print("this is some testertext (3)!");
+            out3.close();
+            myBlob = new Blob ("testerText");
             // TestHelper.runTestSuiteMethods("testCreateBlob", file1.getName());
 
         } catch (Exception e) {
             System.out.println("An error occurred: " + e.getMessage());
         }
 
-        Blob myBlob = new Blob ("testerText");
 
         //sarahs blob is kind of messed up (& couldn't use myBlob in try-catch) so just copy-pasting my own sha1 method here:
         /*
@@ -129,7 +141,7 @@ public class GitTester
         scanner2.close();
 
         // Read original file contents
-        Scanner scanner3 = new Scanner(new File("/Users/chrisheadley/Desktop/Comp Sci/Blob_and_Index/testerText"));
+        Scanner scanner3 = new Scanner(new File("./testerText"));
         String originalFileContents = scanner3.useDelimiter("\\A").next();
         scanner3.close();
         assertEquals("File contents of Blob don't match file contents pre-blob creation", indexFileContents,

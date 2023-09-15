@@ -56,7 +56,7 @@ public class Blob
         return result;
     }
       
-    static final Path myPath = Paths.get("./objects");
+    static final Path myPath = Paths.get("./objects/");
 
     //creates the Blob and saves it to the objects folder
     public Blob(String fileName) throws IOException
