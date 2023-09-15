@@ -40,7 +40,8 @@ public class TreeTester {
         junitExample.delete();
         */
 
-        Blob myBlob = new Blob ("./testerText");
-
+        //Blob myBlob = new Blob ("./testerText");
+        Index i = new Index ();
+        i.initialize();
     }
 }

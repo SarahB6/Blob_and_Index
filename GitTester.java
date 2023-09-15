@@ -17,7 +17,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class ExampleTester 
+public class GitTester 
 {
     @BeforeAll
     static void setUpBeforeClass() throws Exception {
@@ -29,7 +29,7 @@ public class ExampleTester
         File myIndex = new File ("./index");
         myIndex.delete();
         //deleting objects
-        File myObjects = new File ("objects");
+        File myObjects = new File ("./objects");
         File[] contents = myObjects.listFiles();
         if (contents != null) {
             for (File f : contents) {
@@ -73,7 +73,7 @@ public class ExampleTester
         File myFile = new File("./index");
         Path path = Paths.get("./objects");
 
-        assertTrue("e",myFile.exists());
+        assertTrue(myFile.exists());
         assertTrue(Files.exists(path));
     }
 
@@ -86,6 +86,9 @@ public class ExampleTester
             // Manually create the files and folders before the 'testAddFile'
             Index i = new Index ();
             i.initialize ();
+            File myTesterText = new File ("myTesterText.txt");
+            File myTesterText2 = new File ("myTesterText2.txt");
+            File myTesterText3 = new File ("myTesterText3.txt");
             
 
             // TestHelper.runTestSuiteMethods("testCreateBlob", file1.getName());
@@ -94,7 +97,7 @@ public class ExampleTester
             System.out.println("An error occurred: " + e.getMessage());
         }
 
-        Blob myBlob = new Blob ("/Users/chrisheadley/Desktop/Comp Sci/Blob_and_Index/testerText");
+        Blob myBlob = new Blob ("testerText");
 
         //sarahs blob is kind of messed up (& couldn't use myBlob in try-catch) so just copy-pasting my own sha1 method here:
         /*
@@ -113,7 +116,7 @@ public class ExampleTester
         String SHA1 = formatter.toString();
         formatter.close();
         */
-        String SHA1 = myBlob.SHA1Name ("/Users/chrisheadley/Desktop/Comp Sci/Blob_and_Index/testerText");
+        String SHA1 = myBlob.SHA1Name ("./testerText");
 
         // Check blob exists in the objects folder
         File file_junit1 = new File("./objects/" + SHA1);
