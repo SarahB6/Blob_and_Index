@@ -37,20 +37,6 @@ public class Tree {
                 {
                     out.print ("\nblob : " + key + " : " + myMap.get (key).getFileName ());
                 }
-                /*
-                if (myMap.size () == 1)
-                {
-                    out.print ("blob : " + key + " : " + myMap.get (key).getFileName ());
-                }
-                else if (numDone == myMap.size () - 1)
-                {
-                    out.print ("\nblob : " + key + " : " + myMap.get (key).getFileName ());
-                }
-                else
-                {
-                    out.println ("blob : " + key + " : " + myMap.get (key).getFileName ());
-                }
-                */
             }
             else
             {
@@ -62,20 +48,6 @@ public class Tree {
                 {
                     out.print ("\ntree : " + key);
                 }
-                /*
-                if (myMap.size () == 1)
-                {
-                    out.print ("tree : " + key);
-                }
-                else if (numDone == myMap.size () - 1)
-                {
-                    out.print ("\ntree : " + key);
-                }
-                else
-                {
-                    out.print ("\ntree : " + key);
-                }
-                */
             }
             numDone++;
         }
@@ -150,7 +122,7 @@ public class Tree {
     }
 
     //helper for above method
-    private static String byteToHex(final byte[] hash)
+    public String byteToHex(final byte[] hash)
     {
         Formatter formatter = new Formatter();
         for (byte b : hash)

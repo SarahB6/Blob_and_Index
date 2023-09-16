@@ -1,14 +1,17 @@
 
-
-
 import static org.junit.Assert.*;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
 import java.util.Scanner;
 
@@ -87,22 +90,12 @@ public class GitTester
             Index i = new Index ();
             i.initialize ();
             File myTesterText = new File ("myTesterText.txt");
-            File myTesterText2 = new File ("myTesterText2.txt");
-            File myTesterText3 = new File ("myTesterText3.txt");
             myTesterText.createNewFile();
-            myTesterText2.createNewFile();
-            myTesterText3.createNewFile();
 
             
             PrintWriter out = new PrintWriter("testerText");
             out.print("this is some testertext!");
             out.close();
-            PrintWriter out2 = new PrintWriter("testerText");
-            out2.print("this is some (2) testertext!");
-            out2.close();
-            PrintWriter out3 = new PrintWriter("testerText");
-            out3.print("this is some testertext (3)!");
-            out3.close();
             myBlob = new Blob ("testerText");
             // TestHelper.runTestSuiteMethods("testCreateBlob", file1.getName());
 
@@ -110,24 +103,6 @@ public class GitTester
             System.out.println("An error occurred: " + e.getMessage());
         }
 
-
-        //sarahs blob is kind of messed up (& couldn't use myBlob in try-catch) so just copy-pasting my own sha1 method here:
-        /*
-        Scanner scanner = new Scanner(new File("/Users/chrisheadley/Desktop/Comp Sci/Blob_and_Index/testerText"));
-        String myString = scanner.useDelimiter("\\A").next();
-        scanner.close();
-        //hashes file with SHA1 hash code into String called SHA1
-        MessageDigest crypt = MessageDigest.getInstance("SHA-1");
-        crypt.reset();
-        crypt.update(myString.getBytes("UTF-8"));
-        Formatter formatter = new Formatter();
-        for (byte b : crypt.digest())
-        {
-            formatter.format("%02x", b);
-        }
-        String SHA1 = formatter.toString();
-        formatter.close();
-        */
         String SHA1 = myBlob.SHA1Name ("./testerText");
 
         // Check blob exists in the objects folder
@@ -135,7 +110,6 @@ public class GitTester
         assertTrue("Blob file to add not found", file_junit1.exists());
 
         // Read new file contents
-
         Scanner scanner2 = new Scanner(new File("./objects/" + SHA1));
         String indexFileContents = scanner2.useDelimiter("\\A").next();
         scanner2.close();
@@ -148,4 +122,114 @@ public class GitTester
                 originalFileContents);
                 
     }
+
+    @Test
+    @DisplayName("Test if addToTree method works correctly")
+    void testAddToTree() throws Exception {
+        // Run the person's code
+        Index i = new Index();
+        i.initialize ();
+        Tree myTree = new Tree ();
+        myTree.addToTree("tree : bd1ccec139dead5ee0d8c3a0499b42a7d43ac44b");
+        myTree.addToTree("blob : 81e0268c84067377a0a1fdfb5cc996c93f6dcf9f : file1.txt");
+        myTree.save();
+        File checking = new File ("./objects/" + getSHA1OfString ("blob : 81e0268c84067377a0a1fdfb5cc996c93f6dcf9f : file1.txt\ntree : bd1ccec139dead5ee0d8c3a0499b42a7d43ac44b"));
+        assertTrue(checking.exists());
+        Scanner scanner = new Scanner(checking);
+        String fileContents = scanner.useDelimiter("\\A").next();
+        scanner.close();
+        assertTrue(fileContents.contains ("tree : bd1ccec139dead5ee0d8c3a0499b42a7d43ac44b") && fileContents.contains ("blob : 81e0268c84067377a0a1fdfb5cc996c93f6dcf9f : file1.txt"));
+    }
+    @Test
+    @DisplayName("Test if removeBlob method works correctly")
+    void testRemoveBlob() throws Exception {
+        // Run the person's code
+        Index i = new Index();
+        i.initialize ();
+        Tree myTree = new Tree ();
+        myTree.addToTree("blob : 81e0268c84067377a0a1fdfb5cc996c93f6dcf9f : file1.txt");
+        myTree.removeBlob("file1.txt");
+        myTree.save();
+        File checking = new File ("./objects/" + getSHA1OfString (""));
+        assertTrue(checking.exists());
+        BufferedReader br = new BufferedReader(new FileReader("./objects/" + getSHA1OfString ("")));
+        boolean works = false;     
+        if (br.readLine() == null) {
+            works = true;
+        }
+        assertTrue(works);
+    }
+
+    @Test
+    @DisplayName("Test if removeTree method works correctly")
+    void testRemoveTree() throws Exception {
+        // Run the person's code
+        Index i = new Index();
+        i.initialize ();
+        Tree myTree = new Tree ();
+        myTree.addToTree("tree : bd1ccec139dead5ee0d8c3a0499b42a7d43ac44b");
+        myTree.removeTree("bd1ccec139dead5ee0d8c3a0499b42a7d43ac44b");
+        myTree.save();
+        File checking = new File ("./objects/" + getSHA1OfString (""));
+        assertTrue(checking.exists());
+        BufferedReader br = new BufferedReader(new FileReader("./objects/" + getSHA1OfString ("")));
+        boolean works = false;     
+        if (br.readLine() == null) {
+            works = true;
+        }
+        assertTrue(works);
+    }
+
+    @Test
+    @DisplayName("Test if SHA1Name method works correctly")
+    void testSHA1Name () throws Exception {
+
+        // Run the person's code
+        Index i = new Index();
+        i.initialize ();
+        Tree myTree = new Tree ();
+        myTree.save ();
+        assertEquals(getSHA1OfString (""), myTree.SHA1Name ("./objects/" + getSHA1OfString ("")));
+    }
+
+    @Test
+    @DisplayName("Test if ByteToHex method works correctly")
+    void testByteToHex() throws Exception {
+        String turnToBytes = "this will be converted to bytes!";
+        Tree myTree = new Tree ();
+        String myHex = myTree.byteToHex (turnToBytes.getBytes());
+        String myHex2 = myHex.replaceAll("^(00)+", "");
+        byte[] bytes = new byte[myHex2.length() / 2];
+        for (int i = 0; i < myHex2.length(); i += 2)
+        {
+        bytes[i / 2] = (byte) ((Character.digit(myHex2.charAt(i), 16) << 4) + Character.digit(myHex2.charAt(i + 1), 16));
+        }
+        assertEquals (getSHA1OfString(turnToBytes),getSHA1OfString (new String(bytes)));
+
+
+        //byte[] bytes = javax.xml.bind.DatatypeConverter.parseHexBinary(myHex);
+        //String result= new String(bytes, "UTF-8");
+        /*
+        byte[] bytes = Hex.decodeHex(myHex.toCharArray());
+        String lastString = new String(bytes, "UTF-8");
+        assertEquals (getSHA1OfString(turnToBytes),myHex);
+        */
+    }
+
+    private String getSHA1OfString (String input) throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException
+    {
+        //hashes file with SHA1 hash code into String called SHA1
+        MessageDigest crypt = MessageDigest.getInstance("SHA-1");
+        crypt.reset();
+        crypt.update(input.getBytes("UTF-8"));
+        Formatter formatter = new Formatter();
+        for (byte b : crypt.digest())
+        {
+            formatter.format("%02x", b);
+        }
+        String SHA1 = formatter.toString();
+        formatter.close();
+        return SHA1;
+    }
 }
+
