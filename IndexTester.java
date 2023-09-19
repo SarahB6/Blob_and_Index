@@ -212,8 +212,8 @@ public class IndexTester {
 
         //makes sure index contains nothing after all entries have been removed
         assertTrue(checking.length () == 0);
-        File shouldNotBeDeleted1 = new File ("./objects/" + getSHA1OfString ("this is some testertext!"));
-        File shouldNotBeDeleted2 = new File ("./objects/" + getSHA1OfString ("this is some testertext (but cooler)!"));
+        File shouldNotBeDeleted1 = new File ("./objects/" + getSHA1OfString ("this is my first testertext!"));
+        File shouldNotBeDeleted2 = new File ("./objects/" + getSHA1OfString ("this is my second testertext!"));
         
         //makes sure two removed files have not had their corresponding Blobs deleted from the objects folder
         assertTrue (shouldNotBeDeleted1.exists () && shouldNotBeDeleted2.exists ());
