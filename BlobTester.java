@@ -22,9 +22,11 @@ public class BlobTester {
         PrintWriter out = new PrintWriter("./junit_example_file_data.txt");
         out.print("test file contents");
         out.close();
+
         //deleting index
         File myIndex = new File ("./index");
         myIndex.delete();
+
         //deleting objects
         File myObjects = new File ("./objects");
         File[] contents = myObjects.listFiles();
@@ -68,13 +70,10 @@ public class BlobTester {
             i.initialize ();
             File myTesterText = new File ("myTesterText.txt");
             myTesterText.createNewFile();
-
-            
             PrintWriter out = new PrintWriter("testerText");
             out.print("this is some testertext!");
             out.close();
             myBlob = new Blob ("testerText");
-            // TestHelper.runTestSuiteMethods("testCreateBlob", file1.getName());
 
         } catch (Exception e) {
             System.out.println("An error occurred: " + e.getMessage());
@@ -82,22 +81,22 @@ public class BlobTester {
 
         String SHA1 = myBlob.SHA1NameBlob ("./testerText");
 
-        // Check blob exists in the objects folder
         File file_junit1 = new File("./objects/" + SHA1);
+        // Make sure Blob exists in the objects folder
         assertTrue("Blob file to add not found", file_junit1.exists());
 
         // Read new file contents
         Scanner scanner2 = new Scanner(new File("./objects/" + SHA1));
-        String indexFileContents = scanner2.useDelimiter("\\A").next();
+        String blobFileContents = scanner2.useDelimiter("\\A").next();
         scanner2.close();
 
         // Read original file contents
         Scanner scanner3 = new Scanner(new File("./testerText"));
         String originalFileContents = scanner3.useDelimiter("\\A").next();
         scanner3.close();
-        assertEquals("File contents of Blob don't match file contents pre-blob creation", indexFileContents,
-                originalFileContents);
-                
+        
+        //Makes sure Blob file contents match original file contents 
+        assertEquals(blobFileContents,originalFileContents);        
     }
 
     @Test
@@ -109,6 +108,8 @@ public class BlobTester {
         i.initialize ();
         Tree myTree = new Tree ();
         myTree.save ();
+
+        //Ensures that the SHA1NameBlob method generates the same SHA1 String for myTree as getSHA1OfString does directly using file contents (empty) and String --> SHA1 converter
         assertEquals(getSHA1OfString (""), myTree.SHA1NameTree ("./objects/" + getSHA1OfString ("")));
     }
 
@@ -124,10 +125,12 @@ public class BlobTester {
         {
         bytes[i / 2] = (byte) ((Character.digit(myHex2.charAt(i), 16) << 4) + Character.digit(myHex2.charAt(i + 1), 16));
         }
+
+        //Makes sure SHA1 helper method properly generates hex given input String through 2 different methods of calculating hex
         assertEquals (getSHA1OfString(turnToBytes),getSHA1OfString (new String(bytes)));
 
 
-        //byte[] bytes = javax.xml.bind.DatatypeConverter.parseHexBinary(myHex);
+        //Failed alternative, maybe try again if current fails: byte[] bytes = javax.xml.bind.DatatypeConverter.parseHexBinary(myHex);
         //String result= new String(bytes, "UTF-8");
         /*
         byte[] bytes = Hex.decodeHex(myHex.toCharArray());

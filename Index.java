@@ -8,9 +8,6 @@ import java.io.IOException;
 public class Index 
 {
     File f;
-    public Index() throws IOException
-    {
-    }
 
     //checks if the file is already in the Index list
     public Boolean alrInIndex(String fileName) throws IOException

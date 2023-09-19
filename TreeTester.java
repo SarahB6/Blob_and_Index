@@ -72,10 +72,12 @@ public class TreeTester
         myTree.addToTree("blob : 81e0268c84067377a0a1fdfb5cc996c93f6dcf9f : file1.txt");
         myTree.save();
         File checking = new File ("./objects/" + getSHA1OfString ("blob : 81e0268c84067377a0a1fdfb5cc996c93f6dcf9f : file1.txt\ntree : bd1ccec139dead5ee0d8c3a0499b42a7d43ac44b"));
+        //checks to make sure Tree file has been saved to objects folder with correct SHA
         assertTrue(checking.exists());
         Scanner scanner = new Scanner(checking);
         String fileContents = scanner.useDelimiter("\\A").next();
         scanner.close();
+        //checks to make sure file contents were correctly saved to the tree file (tree/blob log)
         assertTrue(fileContents.contains ("tree : bd1ccec139dead5ee0d8c3a0499b42a7d43ac44b") && fileContents.contains ("blob : 81e0268c84067377a0a1fdfb5cc996c93f6dcf9f : file1.txt"));
     }
     @Test
@@ -89,6 +91,7 @@ public class TreeTester
         myTree.removeBlob("file1.txt");
         myTree.save();
         File checking = new File ("./objects/" + getSHA1OfString (""));
+        //checks to make sure empty Tree file has been saved correctly w/ correct SHA after blob entry removal
         assertTrue(checking.exists());
         BufferedReader br = new BufferedReader(new FileReader("./objects/" + getSHA1OfString ("")));
         boolean works = false;     
@@ -96,6 +99,7 @@ public class TreeTester
             works = true;
         }
         br.close ();
+        //checks to make sure saved Tree file is empty after blob entry removal
         assertTrue(works);
     }
 
@@ -110,6 +114,7 @@ public class TreeTester
         myTree.removeTree("bd1ccec139dead5ee0d8c3a0499b42a7d43ac44b");
         myTree.save();
         File checking = new File ("./objects/" + getSHA1OfString (""));
+        //checks to make sure Blob file has been saved w/ correct SHA (SHA of empty file) after tree entry removal
         assertTrue(checking.exists());
         BufferedReader br = new BufferedReader(new FileReader("./objects/" + getSHA1OfString ("")));
         boolean works = false;     
@@ -117,6 +122,7 @@ public class TreeTester
             works = true;
         }
         br.close();
+        //checks to make sure saved Blob file is empty after blob entry removal
         assertTrue(works);
     }
 
@@ -145,6 +151,7 @@ public class TreeTester
         i.initialize ();
         Tree myTree = new Tree ();
         myTree.save ();
+        //checks if method to get SHA1 encoding as String from a file gives same result as method that gives encoding as String from String. The latter was verified to work via online encoder comparison (getSHA1OfString (String )
         assertEquals(getSHA1OfString (""), myTree.SHA1NameTree ("./objects/" + getSHA1OfString ("")));
     }
 
@@ -159,12 +166,14 @@ public class TreeTester
         byte[] bytes = new byte[myHex2.length() / 2];
         for (int i = 0; i < myHex2.length(); i += 2)
         {
-        bytes[i / 2] = (byte) ((Character.digit(myHex2.charAt(i), 16) << 4) + Character.digit(myHex2.charAt(i + 1), 16));
+                bytes[i / 2] = (byte) ((Character.digit(myHex2.charAt(i), 16) << 4) + Character.digit(myHex2.charAt(i + 1), 16));
         }
+        //checks if method to get SHA1 encoding as Hex from a file gives same result as alternative code that gives encoding as Hex from String. The alternative code was verified to work via online encoder comparison (getSHA1OfString (String ))
         assertEquals (getSHA1OfString(turnToBytes),getSHA1OfString (new String(bytes)));
 
 
-        //byte[] bytes = javax.xml.bind.DatatypeConverter.parseHexBinary(myHex);
+         //Failed alternative, maybe try again if current fails:
+         //byte[] bytes = javax.xml.bind.DatatypeConverter.parseHexBinary(myHex);
         //String result= new String(bytes, "UTF-8");
         /*
         byte[] bytes = Hex.decodeHex(myHex.toCharArray());
@@ -174,13 +183,16 @@ public class TreeTester
     }
 
     @Test
+    @DisplayName("Test if save method works correctly")
     void testSave() throws IOException, NoSuchAlgorithmException {
         Index i = new Index ();
         i.initialize ();
         Tree myTree = new Tree ();
         myTree.save();
         File checking = new File ("./objects/" + getSHA1OfString (""));
+        //checks that Tree file has been created
         assertTrue(checking.exists());
+        //checks that Tree file contains correct contents (Tree/Blob entries)
         assertEquals (checking.length(),0);
     }
 }
