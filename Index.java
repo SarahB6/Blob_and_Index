@@ -4,11 +4,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Index 
 {
@@ -22,17 +17,17 @@ public class Index
     {
         BufferedReader br = new BufferedReader(new FileReader("index"));
         Blob currentBlob = new Blob(fileName);
-        String SHA1_of_file = currentBlob.SHA1Name(fileName);
+        String SHA1_of_file = currentBlob.SHA1NameBlob(fileName);
         StringBuilder currentString = new StringBuilder();
         while(br.ready())
         {
             currentString.append(br.readLine());
             if(currentString.indexOf(fileName + " : " + SHA1_of_file) > -1)
             {
+                br.close ();
                 return true;
             }
             currentString.setLength(0);
-            
         }
         br.close();
         return false;
@@ -43,7 +38,7 @@ public class Index
     {
         BufferedWriter bw = new BufferedWriter(new FileWriter("index", true));
         Blob currentBlob = new Blob(fileName);
-        String SHA1_of_file = currentBlob.SHA1Name(fileName);
+        String SHA1_of_file = currentBlob.SHA1NameBlob(fileName);
         if(!alrInIndex(fileName)) //SHOULD IT BE CHECKING IF THE HASH IS THE SAME????
         {
             System.out.println(fileName + "does not alr exist");
@@ -60,7 +55,7 @@ public class Index
             BufferedReader br = new BufferedReader(new FileReader("index"));
             StringBuilder newIndex = new StringBuilder();
             Blob currentBlob = new Blob(fileName);
-            String SHA1_of_file = currentBlob.SHA1Name(fileName);
+            String SHA1_of_file = currentBlob.SHA1NameBlob(fileName);
             StringBuilder currentString = new StringBuilder();
             while(br.ready())
             {

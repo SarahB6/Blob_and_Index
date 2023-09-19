@@ -54,7 +54,7 @@ public class Tree {
         writer.close();
         out.close ();
         //renaming file
-        File file2 = new File ("./objects/" + SHA1Name ("./objects/temp"));
+        File file2 = new File ("./objects/" + SHA1NameTree ("./objects/temp"));
         myFile.renameTo (file2);
     }
     
@@ -88,9 +88,8 @@ public class Tree {
             myMap.remove(SHA1);
         }
     }
-    
-    //codes the input and returns a sha
-    public String SHA1Name(String input) throws IOException
+
+    public String SHA1NameTree(String input) throws IOException
     {
         BufferedReader ogReader= new BufferedReader(new BufferedReader(new FileReader(input))); 
         StringBuilder sb = new StringBuilder();
@@ -108,7 +107,7 @@ public class Tree {
             MessageDigest crypt = MessageDigest.getInstance("SHA-1");
             crypt.reset();
             crypt.update(dataAsString.getBytes("UTF-8"));
-            sha1 = byteToHex(crypt.digest());
+            sha1 = byteToHexTree(crypt.digest());
         }
         catch(NoSuchAlgorithmException e)
         {
@@ -122,7 +121,7 @@ public class Tree {
     }
 
     //helper for above method
-    public String byteToHex(final byte[] hash)
+    public String byteToHexTree(final byte[] hash)
     {
         Formatter formatter = new Formatter();
         for (byte b : hash)

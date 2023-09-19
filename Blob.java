@@ -12,7 +12,7 @@ import java.nio.file.*;
 public class Blob 
 { 
     //codes the input and returns a sha
-    public String SHA1Name(String input) throws IOException
+    public String SHA1NameBlob(String input) throws IOException
     {
         BufferedReader ogReader= new BufferedReader(new BufferedReader(new FileReader(input))); 
         StringBuilder sb = new StringBuilder();
@@ -30,7 +30,7 @@ public class Blob
             MessageDigest crypt = MessageDigest.getInstance("SHA-1");
             crypt.reset();
             crypt.update(dataAsString.getBytes("UTF-8"));
-            sha1 = byteToHex(crypt.digest());
+            sha1 = byteToHexBlob(crypt.digest());
         }
         catch(NoSuchAlgorithmException e)
         {
@@ -44,7 +44,7 @@ public class Blob
     }
 
     //helper for above method
-    private static String byteToHex(final byte[] hash)
+    public static String byteToHexBlob(final byte[] hash)
     {
         Formatter formatter = new Formatter();
         for (byte b : hash)
@@ -62,7 +62,7 @@ public class Blob
     public Blob(String fileName) throws IOException
     {
 
-        String newFileName = SHA1Name(fileName);
+        String newFileName = SHA1NameBlob(fileName);
         BufferedReader br = new BufferedReader(new BufferedReader(new FileReader(fileName))); 
         BufferedWriter bw = new BufferedWriter(new FileWriter(myPath + "/" + newFileName));
         while(br.ready())
