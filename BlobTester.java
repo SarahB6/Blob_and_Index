@@ -18,10 +18,6 @@ public class BlobTester {
 
     @BeforeAll
     static void setUpBeforeClass() throws Exception {
-        //writing string to file
-        PrintWriter out = new PrintWriter("./junit_example_file_data.txt");
-        out.print("test file contents");
-        out.close();
 
         //deleting index
         File myIndex = new File ("./index");
@@ -40,8 +36,6 @@ public class BlobTester {
 
     @AfterAll
     static void tearDownAfterClass() throws Exception {
-        File junitExample = new File ("junit_example_file_data.txt");
-        junitExample.delete();
         File myIndex = new File ("./index");
         myIndex.delete();
         File myObjects = new File ("./objects");
@@ -125,18 +119,9 @@ public class BlobTester {
         {
         bytes[i / 2] = (byte) ((Character.digit(myHex2.charAt(i), 16) << 4) + Character.digit(myHex2.charAt(i + 1), 16));
         }
-
+        
         //Makes sure SHA1 helper method properly generates hex given input String through 2 different methods of calculating hex
         assertEquals (getSHA1OfString(turnToBytes),getSHA1OfString (new String(bytes)));
-
-
-        //Failed alternative, maybe try again if current fails: byte[] bytes = javax.xml.bind.DatatypeConverter.parseHexBinary(myHex);
-        //String result= new String(bytes, "UTF-8");
-        /*
-        byte[] bytes = Hex.decodeHex(myHex.toCharArray());
-        String lastString = new String(bytes, "UTF-8");
-        assertEquals (getSHA1OfString(turnToBytes),myHex);
-        */
     }
 
     private String getSHA1OfString (String input) throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException

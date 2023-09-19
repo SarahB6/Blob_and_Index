@@ -1,16 +1,12 @@
 import static org.junit.Assert.*;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Formatter;
 import java.util.Scanner;
 
 import org.junit.jupiter.api.AfterAll;
@@ -22,11 +18,7 @@ public class IndexTester {
 
     @BeforeAll
     static void setUpBeforeClass() throws Exception {
-        //writing string to file
-        PrintWriter out = new PrintWriter("./junit_example_file_data.txt");
-        out.print("test file contents");
-        out.close();
-        //deleting index
+       //deleting index
         File myIndex = new File ("./index");
         myIndex.delete();
         //deleting objects
@@ -42,8 +34,6 @@ public class IndexTester {
 
     @AfterAll
     static void tearDownAfterClass() throws Exception {
-        File junitExample = new File ("junit_example_file_data.txt");
-        junitExample.delete();
         File myIndex = new File ("./index");
         myIndex.delete();
         File myObjects = new File ("./objects");
@@ -98,7 +88,7 @@ public class IndexTester {
         scanner.close();
 
         //makes sure addFile properly adds an entry to the index file
-        assertTrue(fileContents.contains ("myTesterText.txt : " + getSHA1OfString("this is some testertext!")));
+        assertTrue(fileContents.contains ("myTesterText.txt : d97be938d56fa50d14940b3f1ce7cabfa830afb5"));
     }
 
     @Test
@@ -137,7 +127,7 @@ public class IndexTester {
 
         //makes sure file entry has been removed from index
         assertTrue(checking.length () == 0);
-        File shouldNotBeDeleted = new File ("./objects/" + getSHA1OfString ("this is some testertext!"));
+        File shouldNotBeDeleted = new File ("./objects/d97be938d56fa50d14940b3f1ce7cabfa830afb5");
 
         //checks to see if removed file's Blob has been deleted from the objects folder (it shouldn't be deleted)
         assertTrue (shouldNotBeDeleted.exists ());
@@ -181,7 +171,7 @@ public class IndexTester {
         scanner.close();
 
         //makes sure index has correct contents and length after addition of multiple files
-        assertTrue(fileContents.contains ("myTesterText1.txt : " + getSHA1OfString("this is my first testertext!")) && fileContents.contains("myTesterText2.txt : " + getSHA1OfString ("this is my second testertext!")) && count == 2);
+        assertTrue(fileContents.contains ("myTesterText1.txt : 23f1a98a0bf8a74a5be0b7f81cec8b20357d0057") && count == 2);
     }
 
     @Test
@@ -212,26 +202,10 @@ public class IndexTester {
 
         //makes sure index contains nothing after all entries have been removed
         assertTrue(checking.length () == 0);
-        File shouldNotBeDeleted1 = new File ("./objects/" + getSHA1OfString ("this is my first testertext!"));
-        File shouldNotBeDeleted2 = new File ("./objects/" + getSHA1OfString ("this is my second testertext!"));
+        File shouldNotBeDeleted1 = new File ("./objects/23f1a98a0bf8a74a5be0b7f81cec8b20357d0057");
+        File shouldNotBeDeleted2 = new File ("./objects/0c38c3c03a5cd84b59c1a100c9a09225a44f8f02");
         
         //makes sure two removed files have not had their corresponding Blobs deleted from the objects folder
         assertTrue (shouldNotBeDeleted1.exists () && shouldNotBeDeleted2.exists ());
-    }
-
-    private String getSHA1OfString (String input) throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException
-    {
-        //hashes file with SHA1 hash code into String called SHA1
-        MessageDigest crypt = MessageDigest.getInstance("SHA-1");
-        crypt.reset();
-        crypt.update(input.getBytes("UTF-8"));
-        Formatter formatter = new Formatter();
-        for (byte b : crypt.digest())
-        {
-            formatter.format("%02x", b);
-        }
-        String SHA1 = formatter.toString();
-        formatter.close();
-        return SHA1;
     }
 }

@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -21,12 +20,7 @@ import org.junit.jupiter.api.Test;
 public class TreeTester 
 {
     @BeforeAll
-    static void setUpBeforeClass() throws Exception {
-        //writing string to file
-        PrintWriter out = new PrintWriter("./junit_example_file_data.txt");
-        out.print("test file contents");
-        out.close();
-        //deleting index
+    static void setUpBeforeClass() throws Exception {//deleting index
         File myIndex = new File ("./index");
         myIndex.delete();
         //deleting objects
@@ -42,8 +36,6 @@ public class TreeTester
 
     @AfterAll
     static void tearDownAfterClass() throws Exception {
-        File junitExample = new File ("junit_example_file_data.txt");
-        junitExample.delete();
         File myIndex = new File ("./index");
         myIndex.delete();
         File myObjects = new File ("./objects");
@@ -54,11 +46,6 @@ public class TreeTester
             }
         }
         myObjects.delete();
-        /*
-         * Utils.deleteFile("junit_example_file_data.txt");
-         * Utils.deleteFile("index");
-         * Utils.deleteDirectory("objects");
-         */
     }
 
     @Test
@@ -77,6 +64,7 @@ public class TreeTester
         Scanner scanner = new Scanner(checking);
         String fileContents = scanner.useDelimiter("\\A").next();
         scanner.close();
+        
         //checks to make sure file contents were correctly saved to the tree file (tree/blob log)
         assertTrue(fileContents.contains ("tree : bd1ccec139dead5ee0d8c3a0499b42a7d43ac44b") && fileContents.contains ("blob : 81e0268c84067377a0a1fdfb5cc996c93f6dcf9f : file1.txt"));
     }
@@ -170,16 +158,6 @@ public class TreeTester
         }
         //checks if method to get SHA1 encoding as Hex from a file gives same result as alternative code that gives encoding as Hex from String. The alternative code was verified to work via online encoder comparison (getSHA1OfString (String ))
         assertEquals (getSHA1OfString(turnToBytes),getSHA1OfString (new String(bytes)));
-
-
-         //Failed alternative, maybe try again if current fails:
-         //byte[] bytes = javax.xml.bind.DatatypeConverter.parseHexBinary(myHex);
-        //String result= new String(bytes, "UTF-8");
-        /*
-        byte[] bytes = Hex.decodeHex(myHex.toCharArray());
-        String lastString = new String(bytes, "UTF-8");
-        assertEquals (getSHA1OfString(turnToBytes),myHex);
-        */
     }
 
     @Test
@@ -196,4 +174,3 @@ public class TreeTester
         assertEquals (checking.length(),0);
     }
 }
-
