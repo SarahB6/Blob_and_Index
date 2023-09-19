@@ -70,10 +70,6 @@ public class Index
             
             bw.close();
             br.close();
-
-            File toRemove = new File("./objects/" + SHA1_of_file);
-            toRemove.delete();
-
         }
     }
 
