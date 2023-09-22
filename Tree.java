@@ -11,7 +11,7 @@ import java.util.Formatter;
 import java.util.HashMap;
 
 public class Tree {
-    
+    private String sha1;
     HashMap <String, TreeEntry> myMap;
 
     public Tree ()
@@ -54,7 +54,8 @@ public class Tree {
         writer.close();
         out.close ();
         //renaming file
-        File file2 = new File ("./objects/" + SHA1NameTree ("./objects/temp"));
+        sha1 = SHA1NameTree("./objects/temp");
+        File file2 = new File ("./objects/" + sha1);
         myFile.renameTo (file2);
     }
     
@@ -131,5 +132,10 @@ public class Tree {
         String result = formatter.toString();
         formatter.close();
         return result;
+    }
+
+    //returns the sha1 of a saved tree
+    public String getSha1(){
+        return sha1;
     }
 }
