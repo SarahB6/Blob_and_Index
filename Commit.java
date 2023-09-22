@@ -15,8 +15,9 @@ public class Commit {
         this.prevSha1 = prevSha1 + "\n";
         this.nextSha1 = nextSha1 + "\n";
         this.author = author + "\n";
-        this.summary = summary + "\n";
-        this.date = getDate();
+        this.date = getDate() + "\n";
+        this.summary = summary;
+        
     }
 
     //constructor without nextSHA1
@@ -25,13 +26,14 @@ public class Commit {
         this.prevSha1 = prevSha1 + "\n";
         this.nextSha1 = "\n";
         this.author = author + "\n";
-        this.summary = summary + "\n";
-        this.date = getDate();
+        this.date = getDate() + "\n";
+        this.summary = summary;
     }
 
     //writes all of the instance variable info to a file in the objects folder
     public void writeToFile() throws FileNotFoundException{
         String fileContents = treeSha1 + prevSha1 + nextSha1 + author + date + summary;
+        System.out.println(fileContents);
         File commitFile = new File("./objects/" + getSha1());
         PrintWriter pw = new PrintWriter(commitFile);
         pw.print(fileContents);
@@ -51,6 +53,7 @@ public class Commit {
 
     public String getSha1(){
         String fileContents = treeSha1 + prevSha1 + nextSha1 + author + date + summary;
+        System.out.println(fileContents);
         return getStringHash(fileContents);
     }
 
