@@ -1,0 +1,70 @@
+[
+    {
+        "className": "Index",
+        "constructorConfigs": [
+            {
+                "parameterTypes": [],
+                "values": []
+            }
+        ],
+        "methodConfigs": [
+            {
+                "methodName": "initialize",
+                "parameters": [],
+                "values": []
+            },
+            {
+                "methodName": "addFile",
+                "parameters": [
+                    "String"
+                ],
+                "values": [
+                    "fileName"
+                ]
+            },
+            {
+                "methodName": "alrInIndex",
+                "parameters": [
+                    "String"
+                ],
+                "values": [
+                    "fileName"
+                ]
+            },
+            {
+                "methodName": "removeFile",
+                "parameters": [
+                    "String"
+                ],
+                "values": [
+                    "fileName"
+                ]
+            }
+        ]
+    },
+    {
+        "className": "Blob",
+        "constructorConfigs": [
+            {
+                "parameterTypes": [
+                    "String"
+                ],
+                "values": [
+                    "fileName"
+                ]
+            }
+        ],
+        "methodConfigs": [
+            {
+                "methodName": "SHA1Name",
+                "parameters": ["String"],
+                "values": ["input"]
+            },
+            {
+                "methodName": "byteToHex",
+                "parameters": ["final byte []"],
+                "values": ["hash"]
+            }
+        ]
+    }
+]
