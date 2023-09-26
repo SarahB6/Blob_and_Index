@@ -19,6 +19,30 @@ public class Tree {
         myMap = new HashMap <String, TreeEntry> ();
     }
 
+    public String addDirectory (String name)
+    {
+        File ogFile = new File(name);
+        String[] list = ogFile.list();
+        addDirec
+    }
+
+    private String addDirectoryReccursive ()
+    {
+
+    }
+
+    private String justBlobs (File subDirectory) throws IOException
+    {
+        String[] list = subDirectory.list();
+        StringBuilder valueToShaToGetTreeSha = new StringBuilder();
+        for(int i = 0; i<list.length; i++)
+        {
+            String shaOfThisBlob = SHA1FilePath(list[i]);
+            valueToShaToGetTreeSha.append("blob : " + shaOfThisBlob + " : "  + list[1] + ".txt" ); //ASK IF THIS IS RIGHT
+        }
+        return SHA1StringInput(valueToShaToGetTreeSha.toString());
+    }
+
     public void save () throws IOException
     {
         FileWriter writer = new FileWriter ("./objects/temp");
@@ -54,7 +78,7 @@ public class Tree {
         writer.close();
         out.close ();
         //renaming file
-        sha1 = SHA1NameTree("./objects/temp");
+        sha1 = SHA1FilePath("./objects/temp");
         File file2 = new File ("./objects/" + sha1);
         myFile.renameTo (file2);
     }
@@ -90,7 +114,7 @@ public class Tree {
         }
     }
 
-    public String SHA1NameTree(String input) throws IOException
+    public String SHA1FilePath(String input) throws IOException
     {
         BufferedReader ogReader= new BufferedReader(new BufferedReader(new FileReader(input))); 
         StringBuilder sb = new StringBuilder();
@@ -101,6 +125,29 @@ public class Tree {
         ogReader.close();
 
         String dataAsString = sb.toString();
+
+        String sha1 = "";
+        try
+        {
+            MessageDigest crypt = MessageDigest.getInstance("SHA-1");
+            crypt.reset();
+            crypt.update(dataAsString.getBytes("UTF-8"));
+            sha1 = byteToHexTree(crypt.digest());
+        }
+        catch(NoSuchAlgorithmException e)
+        {
+            e.printStackTrace();
+        }
+        catch(UnsupportedEncodingException e)
+        {
+            e.printStackTrace();
+        }
+        return sha1;
+    }
+
+    public String SHA1StringInput(String input) throws IOException
+    {
+        String dataAsString = input;
 
         String sha1 = "";
         try
