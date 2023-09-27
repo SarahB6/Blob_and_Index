@@ -140,7 +140,7 @@ public class TreeTester
         Tree myTree = new Tree ();
         myTree.save ();
         //checks if method to get SHA1 encoding as String from a file gives same result as method that gives encoding as String from String. The latter was verified to work via online encoder comparison (getSHA1OfString (String )
-        assertEquals(getSHA1OfString (""), myTree.SHA1NameTree ("./objects/" + getSHA1OfString ("")));
+        assertEquals(getSHA1OfString (""), myTree.SHA1FilePath("./objects/" + getSHA1OfString ("")));
     }
 
 

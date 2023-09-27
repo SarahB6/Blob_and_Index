@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.InvalidPathException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
@@ -19,28 +20,80 @@ public class Tree {
         myMap = new HashMap <String, TreeEntry> ();
     }
 
-    public String addDirectory (String name)
+    public String addDirectory (String name) throws IOException, InvalidPathException
     {
+        
         File ogFile = new File(name);
+        if(!ogFile.exists())
+        {
+            throw new java.nio.file.InvalidPathException(name, "Invalid path reason");
+        }
         String[] list = ogFile.list();
-        addDirec
+        StringBuilder sb = new StringBuilder();
+        StringBuilder s = addDirectoryReccursive(list, list[0], sb, 0);
+        //need to return something
+        return ("./objects/" + SHA1StringInput(s.toString()));
+        
     }
 
-    private String addDirectoryReccursive ()
+    private StringBuilder addDirectoryReccursive (String[] list, String currentFile, StringBuilder currentInfo, int i) throws IOException
     {
+        File thisFile = new File(currentFile);
+        if(!thisFile.isDirectory())
+        {
+            String shaOfThisBlob = SHA1FilePath(list[i]);
+            this.addToTree("blob : " + shaOfThisBlob + " : "  + list[1] + ".txt");
+            currentInfo.append("blob : " + shaOfThisBlob + " : "  + list[1] + ".txt" ); //ASK IF THIS IS RIGHT
+            
+        }
+        else
+        {
+            if(insideTreeIsAllBlobs(thisFile))
+            {
+                currentInfo.append(justBlobs(thisFile));
+            }
+            else
+            {
+                StringBuilder sub = new StringBuilder();
+                StringBuilder thisTree = addDirectoryReccursive(thisFile.list(), thisFile.getPath(), sub, i);
+                this.addToTree("tree : "+ SHA1StringInput(thisTree.toString()) + " : " + thisFile.getName());
+                currentInfo.append("tree : "+ SHA1StringInput(thisTree.toString()) + " : " + thisFile.getName());
+            }
+        }
+        if(i+1 < list.length)
+        {
+            addDirectoryReccursive(list, list[i+1], currentInfo, i+1);
+        }
+        return currentInfo;
+    }
 
+    private Boolean insideTreeIsAllBlobs(File thisFile)
+    {
+        String[] list = thisFile.list();
+        for(int i = 0;  i<list.length; i++)
+        {
+            File nowFile = new File(list[i]);
+            if(nowFile.isDirectory())
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     private String justBlobs (File subDirectory) throws IOException
     {
         String[] list = subDirectory.list();
+        Tree childTree = new Tree();
         StringBuilder valueToShaToGetTreeSha = new StringBuilder();
         for(int i = 0; i<list.length; i++)
         {
             String shaOfThisBlob = SHA1FilePath(list[i]);
             valueToShaToGetTreeSha.append("blob : " + shaOfThisBlob + " : "  + list[1] + ".txt" ); //ASK IF THIS IS RIGHT
+            childTree.addToTree("blob : " + shaOfThisBlob + " : "  + list[1] + ".txt" );
         }
-        return SHA1StringInput(valueToShaToGetTreeSha.toString());
+        childTree.save();
+        return ("tree : " + SHA1StringInput(valueToShaToGetTreeSha.toString()) + " : " + subDirectory.getPath());
     }
 
     public void save () throws IOException

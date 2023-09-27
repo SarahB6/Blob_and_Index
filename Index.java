@@ -4,10 +4,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-<<<<<<< HEAD
-
-=======
->>>>>>> master
 
 public class Index 
 {
@@ -79,7 +75,7 @@ public class Index
 
     public void initialize() throws IOException
     {
-<<<<<<< HEAD
+
         
         File objectsFile = new File("objects");
         if(objectsFile.exists())
@@ -92,12 +88,5 @@ public class Index
         {
             f.delete();
         }
-=======
-        new File("./objects").mkdirs();
-        f = new File("./index");
->>>>>>> master
-        f.createNewFile();
-        //BufferedWriter bw = new BufferedWriter(new FileWriter("index", false));
-        //bw.close();
     }
 }
