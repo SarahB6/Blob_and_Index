@@ -32,12 +32,17 @@ public class Tree {
         for(int i = 0; i<list.length; i++)
         {
             File thisFile = new File(list[i]);
-         if(!thisFile.isDirectory())
+            if(!thisFile.isDirectory())
             {
                 String shaOfThisBlob = SHA1FilePath(list[i]);
                 Blob b = new Blob(list[i]);
                 this.addToTree("blob : " + shaOfThisBlob + " : "  + list[1]);
                 
+            }
+            else
+            {
+                String treeShaName = addDirectory(name+"/"+list[i]);
+                this.addToTree("tree : " + treeShaName + " : "  + list[i]);
             }
         }
         this.save();
@@ -45,66 +50,6 @@ public class Tree {
        // StringBuilder s = addDirectoryReccursive(list, list[0], sb, 0);
         //need to return something
         
-    }
-
-    private StringBuilder addDirectoryReccursive (String[] list, String currentFile, StringBuilder currentInfo, int i) throws IOException
-    {
-        File thisFile = new File(currentFile);
-        if(!thisFile.isDirectory())
-        {
-            String shaOfThisBlob = SHA1FilePath(list[i]);
-            this.addToTree("blob : " + shaOfThisBlob + " : "  + list[1]);
-            currentInfo.append("blob : " + shaOfThisBlob + " : "  + list[1]); 
-            
-        }
-        else
-        {
-            if(insideTreeIsAllBlobs(thisFile))
-            {
-                currentInfo.append(justBlobs(thisFile));
-            }
-            else
-            {
-                StringBuilder sub = new StringBuilder();
-                StringBuilder thisTree = addDirectoryReccursive(thisFile.list(), thisFile.getPath(), sub, i);
-                this.addToTree("tree : "+ SHA1StringInput(thisTree.toString()) + " : " + thisFile.getName());
-                currentInfo.append("tree : "+ SHA1StringInput(thisTree.toString()) + " : " + thisFile.getName());
-            }
-        }
-        if(i+1 < list.length)
-        {
-            addDirectoryReccursive(list, list[i+1], currentInfo, i+1);
-        }
-        return currentInfo;
-    }
-
-    private Boolean insideTreeIsAllBlobs(File thisFile)
-    {
-        String[] list = thisFile.list();
-        for(int i = 0;  i<list.length; i++)
-        {
-            File nowFile = new File(list[i]);
-            if(nowFile.isDirectory())
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private String justBlobs (File subDirectory) throws IOException
-    {
-        String[] list = subDirectory.list();
-        Tree childTree = new Tree();
-        StringBuilder valueToShaToGetTreeSha = new StringBuilder();
-        for(int i = 0; i<list.length; i++)
-        {
-            String shaOfThisBlob = SHA1FilePath(list[i]);
-            valueToShaToGetTreeSha.append("blob : " + shaOfThisBlob + " : "  + list[1] + ".txt" ); //ASK IF THIS IS RIGHT
-            childTree.addToTree("blob : " + shaOfThisBlob + " : "  + list[1] + ".txt" );
-        }
-        childTree.save();
-        return ("tree : " + SHA1StringInput(valueToShaToGetTreeSha.toString()) + " : " + subDirectory.getPath());
     }
 
     public void save () throws IOException
