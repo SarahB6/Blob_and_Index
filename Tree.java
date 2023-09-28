@@ -29,10 +29,21 @@ public class Tree {
             throw new java.nio.file.InvalidPathException(name, "Invalid path reason");
         }
         String[] list = ogFile.list();
-        StringBuilder sb = new StringBuilder();
-        StringBuilder s = addDirectoryReccursive(list, list[0], sb, 0);
+        for(int i = 0; i<list.length; i++)
+        {
+            File thisFile = new File(list[i]);
+         if(!thisFile.isDirectory())
+            {
+                String shaOfThisBlob = SHA1FilePath(list[i]);
+                Blob b = new Blob(list[i]);
+                this.addToTree("blob : " + shaOfThisBlob + " : "  + list[1]);
+                
+            }
+        }
+        this.save();
+        return sha1;
+       // StringBuilder s = addDirectoryReccursive(list, list[0], sb, 0);
         //need to return something
-        return ("./objects/" + SHA1StringInput(s.toString()));
         
     }
 
@@ -42,8 +53,8 @@ public class Tree {
         if(!thisFile.isDirectory())
         {
             String shaOfThisBlob = SHA1FilePath(list[i]);
-            this.addToTree("blob : " + shaOfThisBlob + " : "  + list[1] + ".txt");
-            currentInfo.append("blob : " + shaOfThisBlob + " : "  + list[1] + ".txt" ); //ASK IF THIS IS RIGHT
+            this.addToTree("blob : " + shaOfThisBlob + " : "  + list[1]);
+            currentInfo.append("blob : " + shaOfThisBlob + " : "  + list[1]); 
             
         }
         else
@@ -98,8 +109,9 @@ public class Tree {
 
     public void save () throws IOException
     {
-        FileWriter writer = new FileWriter ("./objects/temp");
-        File myFile = new File("./objects/temp");
+        File myFile = new File("./temp");
+        myFile.createNewFile();
+        FileWriter writer = new FileWriter ("./temp");
         PrintWriter out = new PrintWriter (writer);
         int numDone = 0;
         for (String key : myMap.keySet ())
@@ -131,7 +143,7 @@ public class Tree {
         writer.close();
         out.close ();
         //renaming file
-        sha1 = SHA1FilePath("./objects/temp");
+        sha1 = SHA1FilePath("./temp");
         File file2 = new File ("./objects/" + sha1);
         myFile.renameTo (file2);
     }

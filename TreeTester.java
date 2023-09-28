@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.InvalidPathException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
@@ -25,6 +26,7 @@ public class TreeTester
         myIndex.delete();
         //deleting objects
         File myObjects = new File ("./objects");
+        myObjects.mkdirs();
         File[] contents = myObjects.listFiles();
         if (contents != null) {
             for (File f : contents) {
@@ -32,6 +34,12 @@ public class TreeTester
             }
         }
         myObjects.delete();
+        File Direct = new File("./Directory");
+        Direct.mkdirs();
+        File Test1 = new File("./Directory/Test1.txt");
+        File Test2 = new File("./Directory/Test2.txt");
+        File Test3 = new File("./Directory/Test3.txt");
+        
     }
 
     @AfterAll
@@ -172,5 +180,15 @@ public class TreeTester
         assertTrue(checking.exists());
         //checks that Tree file contains correct contents (Tree/Blob entries)
         assertEquals (checking.length(),0);
+    }
+
+    @Test
+    @DisplayName("Test if add directories works w only files")
+    void testAddDirectory() throws InvalidPathException, IOException 
+    {
+        Tree myTree = new Tree();
+        myTree.addDirectory("./Directory");
+        File treeDirectory = new File("./tree");
+        assertTrue(treeDirectory.exists());
     }
 }
