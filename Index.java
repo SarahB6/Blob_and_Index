@@ -36,7 +36,7 @@ public class Index
         BufferedWriter bw = new BufferedWriter(new FileWriter("index", true));
         Blob currentBlob = new Blob(fileName);
         String SHA1_of_file = currentBlob.SHA1NameBlob(fileName);
-        if(!alrInIndex(fileName)) //SHOULD IT BE CHECKING IF THE HASH IS THE SAME????
+        if(!alrInIndex(fileName) && !alrInIndex(SHA1_of_file)) 
         {
             System.out.println(fileName + "does not alr exist");
             bw.write(fileName + " : " + SHA1_of_file + "\n");
@@ -77,7 +77,7 @@ public class Index
     {
 
         
-        File objectsFile = new File("objects");
+        //File objectsFile = new File("objects");
         if(objectsFile.exists())
         {
             objectsFile.delete();

@@ -180,7 +180,7 @@ public class TreeTester
         assertTrue(checking.exists());
         //checks that Tree file contains correct contents (Tree/Blob entries)
         assertEquals (checking.length(),0);
-    }
+    }}
 
     @Test
     @DisplayName("Test if add directories works w only files")
@@ -188,7 +188,7 @@ public class TreeTester
     {
         Tree myTree = new Tree();
         myTree.addDirectory("./Directory");
-        File treeDirectory = new File("./tree");
+        File treeDirectory = new File("./Directory");
         assertTrue(treeDirectory.exists());
     }
 }
