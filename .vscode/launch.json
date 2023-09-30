@@ -4,7 +4,12 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        
-
+        {
+            "type": "java",
+            "name": "tester",
+            "request": "launch",
+            "mainClass": "tester",
+            "projectName": "Blob_and_Index_5231d7bd"
+        }
     ]
 }

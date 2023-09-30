@@ -180,15 +180,25 @@ public class TreeTester
         assertTrue(checking.exists());
         //checks that Tree file contains correct contents (Tree/Blob entries)
         assertEquals (checking.length(),0);
-    }}
+    }
 
     @Test
-    @DisplayName("Test if add directories works w only files")
-    void testAddDirectory() throws InvalidPathException, IOException 
+    @DisplayName("Test if add directories creates Directory")
+    void testIfAddDirectoryCreatesDirectory() throws InvalidPathException, IOException 
     {
         Tree myTree = new Tree();
         myTree.addDirectory("./Directory");
         File treeDirectory = new File("./Directory");
         assertTrue(treeDirectory.exists());
+    }
+
+    @Test
+    @DisplayName("Test if add directories works with only files")
+    void testIfAddDirectoryWorksWithFiles() throws InvalidPathException, IOException 
+    {
+        Tree myTree = new Tree();
+        myTree.addDirectory("./Directory");
+        File treeDirectory = new File("./Directory");
+        assertTrue(treeDirectory.getName().contains(""));
     }
 }

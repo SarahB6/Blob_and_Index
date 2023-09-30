@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Formatter;
 
 public class Index 
 {
@@ -30,16 +34,25 @@ public class Index
         return false;
     }
 
+    public void addDirectory(String thisDirectory) throws IOException //CAN I TAKE IN A STRING INSTEAD???
+    {
+        BufferedWriter bw = new BufferedWriter(new FileWriter("index", true));
+        Tree thisDirectoryTree = new Tree();
+        String shaOfThisDirectoryTree = thisDirectoryTree.addDirectory(thisDirectory);
+        bw.write("tree : " + shaOfThisDirectoryTree + " : " + thisDirectory); //FILE NAME IDK HOW TO GET IT THO
+        bw.close();
+    }
+
     //adds the file to the index if it doesn't already exist
     public void addFile(String fileName) throws IOException
     {
         BufferedWriter bw = new BufferedWriter(new FileWriter("index", true));
         Blob currentBlob = new Blob(fileName);
         String SHA1_of_file = currentBlob.SHA1NameBlob(fileName);
-        if(!alrInIndex(fileName) && !alrInIndex(SHA1_of_file)) 
+        if(!alrInIndex(fileName)) //SHOULD IT BE CHECKING IF THE HASH IS THE SAME????
         {
             System.out.println(fileName + "does not alr exist");
-            bw.write(fileName + " : " + SHA1_of_file + "\n");
+            bw.write("blob : "+ SHA1_of_file + ": " + fileName + "\n");
         }
         bw.close();
     }
@@ -77,7 +90,7 @@ public class Index
     {
 
         
-        //File objectsFile = new File("objects");
+        File objectsFile = new File("objects");
         if(objectsFile.exists())
         {
             objectsFile.delete();
@@ -88,5 +101,72 @@ public class Index
         {
             f.delete();
         }
+    }
+
+        public String SHA1FilePath(String input) throws IOException
+    {
+        BufferedReader ogReader= new BufferedReader(new BufferedReader(new FileReader(input))); 
+        StringBuilder sb = new StringBuilder();
+        while(ogReader.ready())
+        {
+            sb.append((char)ogReader.read());
+        }
+        ogReader.close();
+
+        String dataAsString = sb.toString();
+
+        String sha1 = "";
+        try
+        {
+            MessageDigest crypt = MessageDigest.getInstance("SHA-1");
+            crypt.reset();
+            crypt.update(dataAsString.getBytes("UTF-8"));
+            sha1 = byteToHexTree(crypt.digest());
+        }
+        catch(NoSuchAlgorithmException e)
+        {
+            e.printStackTrace();
+        }
+        catch(UnsupportedEncodingException e)
+        {
+            e.printStackTrace();
+        }
+        return sha1;
+    }
+
+    public String SHA1StringInput(String input) throws IOException
+    {
+        String dataAsString = input;
+
+        String sha1 = "";
+        try
+        {
+            MessageDigest crypt = MessageDigest.getInstance("SHA-1");
+            crypt.reset();
+            crypt.update(dataAsString.getBytes("UTF-8"));
+            sha1 = byteToHexTree(crypt.digest());
+        }
+        catch(NoSuchAlgorithmException e)
+        {
+            e.printStackTrace();
+        }
+        catch(UnsupportedEncodingException e)
+        {
+            e.printStackTrace();
+        }
+        return sha1;
+    }
+
+    //helper for above method
+    public String byteToHexTree(final byte[] hash)
+    {
+        Formatter formatter = new Formatter();
+        for (byte b : hash)
+        {
+            formatter.format("%02x", b);
+        }
+        String result = formatter.toString();
+        formatter.close();
+        return result;
     }
 }

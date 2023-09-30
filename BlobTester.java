@@ -85,7 +85,7 @@ public class BlobTester {
         scanner2.close();
 
         // Read original file contents
-        Scanner scanner3 = new Scanner(new File(()"./testerText"));
+        Scanner scanner3 = new Scanner(new File("./testerText"));
         String originalFileContents = scanner3.useDelimiter("\\A").next();
         scanner3.close();
         
@@ -104,7 +104,7 @@ public class BlobTester {
         myTree.save ();
 
         //Ensures that the SHA1NameBlob method generates the same SHA1 String for myTree as getSHA1OfString does directly using file contents (empty) and String --> SHA1 converter
-        assertEquals(getSHA1OfString (""), myTree.SHA1FilePath(("./objects/" + getSHA1OfString ("")));
+        assertEquals(getSHA1OfString (""), myTree.SHA1FilePath("./objects/" + getSHA1OfString ("")));
     }
 
     @Test
