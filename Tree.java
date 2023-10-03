@@ -20,6 +20,11 @@ public class Tree {
         myMap = new HashMap <String, TreeEntry> ();
     }
 
+    public void addTreeForCommit(String sha) throws IOException
+    {
+        myMap.put(SHA1StringInput(sha), new TreeEntry("tree", ""));
+    }
+
     public String addDirectory (String name) throws IOException, InvalidPathException
     {
         
@@ -33,7 +38,8 @@ public class Tree {
         StringBuilder sb = new StringBuilder();
         for(int i = 0; i<list.length; i++)
         {
-            File thisFile = new File(list[i]);
+            File thisFile = new File(name + "/" + list[i]);
+
             if(!thisFile.isDirectory())
             {
                 String shaOfThisBlob = SHA1FilePath("./" + name + "/" + list[i]);
@@ -44,9 +50,20 @@ public class Tree {
             }
             else
             {
-                String shaOfInsideDirectory = addDirectory(list[i]);
-                this.addToTree("tree : " + shaOfInsideDirectory + " : " + list[i]);
-                sb.append("tree : " + shaOfInsideDirectory + " : " + list[i] + "\n");
+                /* 
+                Tree subTree = new Tree();
+                String tempPath = thisFile.getPath();
+                String hash = subTree.addDirectory(tempPath);
+                subTree.save();
+
+                this.addToTree("tree : " + hash + " : " + tempPath);
+                */
+            
+                Tree thisDirectoryTree = new Tree ();
+                insideTree.addToTree ("tree : " + thisDirectoryTree.addDirectory (name + "/" + list[i]) + " : " + list[i]);
+            
+              // String shaOfInsideDirectory = addDirectory(name + "./" + list[i]);
+              // sb.append("tree : " + shaOfInsideDirectory + " : " + list[i] + "\n");
             }
         }
         insideTree.save();
@@ -55,10 +72,8 @@ public class Tree {
             sb.deleteCharAt(sb.length()-1);
         }
         myMap.put(SHA1StringInput(sb.toString()), new TreeEntry("tree", name));
-        this.save();
-        return sha1;
-       // StringBuilder s = addDirectoryReccursive(list, list[0], sb, 0);
-        //need to return something
+
+        return insideTree.getSha1();
         
     }
 
@@ -80,6 +95,17 @@ public class Tree {
                 else
                 {
                     out.print ("\nblob : " + key + " : " + myMap.get (key).getFileName ());
+                }
+            }
+            else if(myMap.get(key).getFileName().length() > 0)
+            {
+                if (numDone == 0)
+                {
+                    out.print ("tree : " + key + " : " + myMap.get (key).getFileName());
+                }
+                else
+                {
+                    out.print ("\ntree : " + key + " : " + myMap.get (key).getFileName());
                 }
             }
             else
@@ -202,7 +228,54 @@ public class Tree {
     }
 
     //returns the sha1 of a saved tree
-    public String getSha1(){
+    public String getSha1() throws IOException{
+        File myFile = new File("./temp");
+        myFile.createNewFile();
+        FileWriter writer = new FileWriter ("./temp");
+        PrintWriter out = new PrintWriter (writer);
+        int numDone = 0;
+        for (String key : myMap.keySet ())
+        {
+            if (myMap.get (key).getType ().equals ("blob"))
+            {
+                if (numDone == 0)
+                {
+                    out.print ("blob : " + key + " : " + myMap.get (key).getFileName ());
+                }
+                else
+                {
+                    out.print ("\nblob : " + key + " : " + myMap.get (key).getFileName ());
+                }
+            }
+            else if(myMap.get(key).getFileName().length() > 0)
+            {
+                if (numDone == 0)
+                {
+                    out.print ("tree : " + key + " : " + myMap.get (key).getFileName());
+                }
+                else
+                {
+                    out.print ("\ntree : " + key + " : " + myMap.get (key).getFileName());
+                }
+            }
+            else
+            {
+                if (numDone == 0)
+                {
+                    out.print ("tree : " + key);
+                }
+                else
+                {
+                    out.print ("\ntree : " + key);
+                }
+            }
+            numDone++;
+        }
+        writer.close();
+        out.close ();
+
+        sha1 = SHA1FilePath("./temp");
+        myFile.delete();
         return sha1;
     }
 }

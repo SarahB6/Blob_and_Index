@@ -54,9 +54,21 @@ public class Commit {
         while(br.ready())
         {
             String line = br.readLine();
-            
+            if(line.contains("blob : "))
+            {
+                tree.addToTree(line);
+            }
+            else
+            {
+                tree.addDirectory(line);
+            }
         }
+        BufferedWriter bw = new BufferedWriter(new FileWriter("./index", false));
+        bw.write("");
+        bw.close();
+        tree.addTreeForCommit(oldTreeSha);
         tree.save();
+        br.close();
         return tree.getSha1();
     }
     //writes all of the instance variable info to a file in the objects folder

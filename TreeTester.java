@@ -215,6 +215,6 @@ public class TreeTester
         Tree myTree = new Tree();
         myTree.addDirectory("./Directory");
         File treeDirectory = new File("./Directory");
-        //assertTrue(treeDirectory.);
+        assertTrue(treeDirectory.getName().contains("7"));
     }
 }
