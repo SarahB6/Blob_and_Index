@@ -45,12 +45,15 @@ public class Tree {
             else
             {
                 String shaOfInsideDirectory = addDirectory(list[i]);
-                insideTree.addToTree("tree : " + shaOfInsideDirectory + " : " + list[i]);
+                this.addToTree("tree : " + shaOfInsideDirectory + " : " + list[i]);
                 sb.append("tree : " + shaOfInsideDirectory + " : " + list[i] + "\n");
             }
         }
         insideTree.save();
-        sb.deleteCharAt(sb.length()-1);
+        if(sb.length()>1)
+        {
+            sb.deleteCharAt(sb.length()-1);
+        }
         myMap.put(SHA1StringInput(sb.toString()), new TreeEntry("tree", name));
         this.save();
         return sha1;
@@ -108,7 +111,7 @@ public class Tree {
         }
         else
         {
-            myMap.put (typeAndContent.substring (7,47), new TreeEntry ("tree", ""));
+            myMap.put (typeAndContent.substring (7,47), new TreeEntry ("tree", typeAndContent.substring(49)));
         }
     }
     

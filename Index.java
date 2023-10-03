@@ -37,9 +37,10 @@ public class Index
     public void addDirectory(String thisDirectory) throws IOException //CAN I TAKE IN A STRING INSTEAD???
     {
         BufferedWriter bw = new BufferedWriter(new FileWriter("index", true));
+        File f = new File(thisDirectory);
         Tree thisDirectoryTree = new Tree();
         String shaOfThisDirectoryTree = thisDirectoryTree.addDirectory(thisDirectory);
-        bw.write("tree : " + shaOfThisDirectoryTree + " : " + thisDirectory); //FILE NAME IDK HOW TO GET IT THO
+        bw.write("tree : " + shaOfThisDirectoryTree + " : " + f.getName() + "\n"); //FILE NAME IDK HOW TO GET IT THO
         bw.close();
     }
 

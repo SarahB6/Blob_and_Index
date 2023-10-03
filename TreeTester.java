@@ -2,9 +2,11 @@
 import static org.junit.Assert.*;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.InvalidPathException;
@@ -36,9 +38,23 @@ public class TreeTester
         myObjects.delete();
         File Direct = new File("./Directory");
         Direct.mkdirs();
-        File Test1 = new File("./Directory/Test1.txt");
-        File Test2 = new File("./Directory/Test2.txt");
-        File Test3 = new File("./Directory/Test3.txt");
+        File examplefile1= new File("./Directory/examplefile1.txt");
+        examplefile1.createNewFile();
+         BufferedWriter bw = new BufferedWriter(new FileWriter("./Directory/examplefile1.txt"));
+         bw.write("thisisfile1");
+         bw.close();
+
+        File examplefile2= new File("./Directory/examplefile2.txt");
+        examplefile2.createNewFile();
+         BufferedWriter bw2 = new BufferedWriter(new FileWriter("./Directory/examplefile2.txt"));
+         bw.write("thisisfile2");
+         bw2.close();
+
+        File examplefile3= new File("./Directory/examplefile3");
+        examplefile3.createNewFile();
+         BufferedWriter bw3 = new BufferedWriter(new FileWriter("./Directory/examplefile3"));
+         bw3.write("thisisfile3");
+         bw3.close();
         
     }
 
@@ -199,6 +215,6 @@ public class TreeTester
         Tree myTree = new Tree();
         myTree.addDirectory("./Directory");
         File treeDirectory = new File("./Directory");
-        assertTrue(treeDirectory.getName().contains(""));
+        //assertTrue(treeDirectory.);
     }
 }

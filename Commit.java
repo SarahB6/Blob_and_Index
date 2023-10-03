@@ -1,5 +1,9 @@
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigInteger;
@@ -9,6 +13,7 @@ import java.security.NoSuchAlgorithmException;
 public class Commit {
     private String treeSha1, prevSha1, nextSha1, author, summary, date;
 
+
     //constructor with nextSHA1
     public Commit(String prevSha1, String nextSha1, String author, String summary) throws IOException{
         this.treeSha1 = createTree() + "\n";
@@ -17,6 +22,8 @@ public class Commit {
         this.author = author + "\n";
         this.date = getDate() + "\n";
         this.summary = summary;
+        this.writeToFile();
+
         
     }
 
@@ -28,12 +35,34 @@ public class Commit {
         this.author = author + "\n";
         this.date = getDate() + "\n";
         this.summary = summary;
+        this.writeToFile();
     }
 
+
+    public String getFirstLine(String c) throws IOException
+    {
+        BufferedReader br = new BufferedReader(new FileReader("./objects/" + c));
+        String s = br.readLine();
+        br.close();
+        return s;
+    }
+    //creates and saves an empty tree to the objects folder, returns the sha of the tree
+    public String createTree() throws IOException{
+        String oldTreeSha = getFirstLine(prevSha1);
+        Tree tree = new Tree();
+        BufferedReader br = new BufferedReader(new FileReader("./index"));
+        while(br.ready())
+        {
+            String line = br.readLine();
+            
+        }
+        tree.save();
+        return tree.getSha1();
+    }
     //writes all of the instance variable info to a file in the objects folder
     public void writeToFile() throws FileNotFoundException{
         String fileContents = treeSha1 + prevSha1 + nextSha1 + author + date + summary;
-        System.out.println(fileContents);
+        System.out.println(fileContents); //POINT OF THIS??
         File commitFile = new File("./objects/" + getSha1());
         PrintWriter pw = new PrintWriter(commitFile);
         pw.print(fileContents);
@@ -44,12 +73,7 @@ public class Commit {
         return java.time.LocalDate.now().toString();
     }
 
-    //creates and saves an empty tree to the objects folder, returns the sha of the tree
-    public String createTree() throws IOException{
-        Tree tree = new Tree();
-        tree.save();
-        return tree.getSha1();
-    }
+  
 
     public String getSha1(){
         String fileContents = treeSha1 + prevSha1 + nextSha1 + author + date + summary;
