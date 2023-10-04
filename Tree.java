@@ -50,20 +50,8 @@ public class Tree {
             }
             else
             {
-                /* 
-                Tree subTree = new Tree();
-                String tempPath = thisFile.getPath();
-                String hash = subTree.addDirectory(tempPath);
-                subTree.save();
-
-                this.addToTree("tree : " + hash + " : " + tempPath);
-                */
-            
                 Tree thisDirectoryTree = new Tree ();
                 insideTree.addToTree ("tree : " + thisDirectoryTree.addDirectory (name + "/" + list[i]) + " : " + list[i]);
-            
-              // String shaOfInsideDirectory = addDirectory(name + "./" + list[i]);
-              // sb.append("tree : " + shaOfInsideDirectory + " : " + list[i] + "\n");
             }
         }
         insideTree.save();
@@ -133,11 +121,15 @@ public class Tree {
     {
         if (typeAndContent.substring (0,4).equals ("blob"))
         {
-            myMap.put (typeAndContent.substring (7,47), new TreeEntry ("blob", typeAndContent.substring (49)));
+            myMap.put (typeAndContent.substring (7,47), new TreeEntry ("blob", typeAndContent.substring (50)));//CHANGED TO 50
+        }
+        else if(typeAndContent.length() < 50)
+        {
+            myMap.put (typeAndContent.substring (7,47), new TreeEntry ("tree", ""));//CHANGED TO 50
         }
         else
         {
-            myMap.put (typeAndContent.substring (7,47), new TreeEntry ("tree", typeAndContent.substring(49)));
+            myMap.put (typeAndContent.substring (7,47), new TreeEntry ("tree", typeAndContent.substring(50)));
         }
     }
     
