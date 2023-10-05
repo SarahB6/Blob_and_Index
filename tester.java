@@ -9,12 +9,15 @@ public class tester
         Tree t = new Tree();
        //t.addToTree("blob : aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d: Test1.txt");
        //t.addToTree("blob : 3c8ec4874488f6090a157b014ce3397ca8e06d4f: Test2.txt");
-        t.addDirectory("AdvancedDirectory");
-        t.save();
+       // t.addDirectory("AdvancedDirectory");
+       // t.save();
 
-      //  i.addDirectory("./AdvancedDirectory");
-      //  i.addFile("blob : aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d: Test1.txt");
-
+       i.addFile("myTesterText.txt");
+       Commit c = new Commit("Sarah", "first commit");
+       i.setFirstAdded(true);
+       i.addFile("Test1.txt");
+      // i.addFile("Test2.txt");
+       Commit c2 = new Commit("110c71f43dfae881f26e2f7b91e63de036c4ccf8", "Sarah", "second commit");
         
     }
     

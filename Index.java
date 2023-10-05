@@ -1,3 +1,4 @@
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -12,7 +13,15 @@ import java.util.Formatter;
 public class Index 
 {
     File f;
-
+    boolean firstAdded;
+    public Index()
+    {
+        firstAdded = true;
+    }
+    public void setFirstAdded(Boolean which)
+    {
+        firstAdded = which;
+    }
     //checks if the file is already in the Index list
     public Boolean alrInIndex(String fileName) throws IOException
     {
@@ -40,11 +49,20 @@ public class Index
         File f = new File(thisDirectory);
         Tree thisDirectoryTree = new Tree();
         String shaOfThisDirectoryTree = thisDirectoryTree.addDirectory(thisDirectory);
-        bw.write("tree : " + shaOfThisDirectoryTree + " : " + f.getName() + "\n"); //FILE NAME IDK HOW TO GET IT THO
+        if(firstAdded)
+        {
+            bw.write("tree : " + shaOfThisDirectoryTree + " : " + f.getName()); //FILE NAME IDK HOW TO GET IT THO
+        }
+        else
+        {
+            bw.write("\ntree : " + shaOfThisDirectoryTree + " : " + f.getName());
+        }
         bw.close();
+        firstAdded = false;
     }
 
-    //adds the file to the index if it doesn't already exist
+/* 
+        //adds the file to the index if it doesn't already exist
     public void addFile(String fileName) throws IOException
     {
         BufferedWriter bw = new BufferedWriter(new FileWriter("index", true));
@@ -53,9 +71,33 @@ public class Index
         if(!alrInIndex(fileName)) //SHOULD IT BE CHECKING IF THE HASH IS THE SAME????
         {
             System.out.println(fileName + "does not alr exist");
-            bw.write("blob : "+ SHA1_of_file + ": " + fileName + "\n");
+            bw.write(fileName + " : " + SHA1_of_file + "\n");
         }
         bw.close();
+    }*/
+
+    //adds the file to the index if it doesn't already exist
+    public void addFile(String fileName) throws IOException
+    {
+        BufferedWriter bw = new BufferedWriter(new FileWriter("./index", true));
+        Blob currentBlob = new Blob(fileName);
+        String SHA1_of_file = currentBlob.SHA1NameBlob(fileName);
+
+        if(!alrInIndex(fileName)) //SHOULD IT BE CHECKING IF THE HASH IS THE SAME????
+        {
+            System.out.println(fileName + "does not alr exist");       
+            if(firstAdded)
+            {
+                bw.write("blob : " + SHA1_of_file + " : " + fileName); //FILE NAME IDK HOW TO GET IT THO
+            }
+            else
+            {
+                bw.write("\nblob : " + SHA1_of_file + " : " + fileName);
+            }
+        }
+        
+        bw.close();
+        firstAdded = false;
     }
 
     //removes file from the index list and objects folder
@@ -87,21 +129,14 @@ public class Index
         }
     }
 
+
     public void initialize() throws IOException
     {
-
-        
-        File objectsFile = new File("objects");
-        if(objectsFile.exists())
-        {
-            objectsFile.delete();
-        }
-        objectsFile.mkdirs();
-        f = new File("index");
-        if(f.exists())
-        {
-            f.delete();
-        }
+        new File("./objects").mkdirs();
+        f = new File("./index");
+        f.createNewFile();
+        BufferedWriter bw = new BufferedWriter(new FileWriter("index", false));
+        bw.close();
     }
 
         public String SHA1FilePath(String input) throws IOException

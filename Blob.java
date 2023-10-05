@@ -55,8 +55,7 @@ public class Blob
         formatter.close();
         return result;
     }
-      
-    static final Path myPath = Paths.get("./objects/");
+
 
     //creates the Blob and saves it to the objects folder
     public Blob(String fileName) throws IOException
@@ -64,7 +63,7 @@ public class Blob
 
         String newFileName = SHA1NameBlob(fileName);
         BufferedReader br = new BufferedReader(new BufferedReader(new FileReader(fileName))); 
-        BufferedWriter bw = new BufferedWriter(new FileWriter(myPath + "/" + newFileName));
+        BufferedWriter bw = new BufferedWriter(new FileWriter("./objects/" + newFileName));
         while(br.ready())
 		{
             bw.write((char)br.read());

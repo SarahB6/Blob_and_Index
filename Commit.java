@@ -16,45 +16,60 @@ public class Commit {
 
     //constructor with nextSHA1
     public Commit(String prevSha1, String nextSha1, String author, String summary) throws IOException{
-        this.treeSha1 = createTree() + "\n";
+        
         this.prevSha1 = prevSha1 + "\n";
         this.nextSha1 = nextSha1 + "\n";
         this.author = author + "\n";
         this.date = getDate() + "\n";
         this.summary = summary;
-        this.writeToFile();
+        this.treeSha1 = createTree() + "\n";
+        writeToFile();
 
         
     }
 
     //constructor without nextSHA1
     public Commit(String prevSha1, String author, String summary) throws IOException{
-        this.treeSha1 = createTree() + "\n";
+        
         this.prevSha1 = prevSha1 + "\n";
         this.nextSha1 = "\n";
         this.author = author + "\n";
         this.date = getDate() + "\n";
         this.summary = summary;
-        this.writeToFile();
+        this.treeSha1 = createTree() + "\n";
+        writeToFile();
     }
 
+    public Commit(String author, String summary) throws IOException
+    {
+        this.treeSha1 = createTreeWithoutPrev() + "\n";
+        this.prevSha1 = ""+ "\n";
+        this.nextSha1 = "\n";
+        this.author = author + "\n";
+        this.date = getDate() + "\n";
+        this.summary = summary;
+        writeToFile();
+    }
 
     public String getFirstLine(String c) throws IOException
-    {
+    {   
         BufferedReader br = new BufferedReader(new FileReader("./objects/" + c));
         String s = br.readLine();
         br.close();
         return s;
     }
-    //creates and saves an empty tree to the objects folder, returns the sha of the tree
+
     public String createTree() throws IOException{
-        String oldTreeSha = getFirstLine(prevSha1);
+        String prevShaWithoutNextLine = prevSha1.substring(0, prevSha1.length()-1);
+        String oldTreeSha = getFirstLine(prevShaWithoutNextLine);
+        //writes the staged changes into the tree
         Tree tree = new Tree();
+        File f1 = new File("./index");
         BufferedReader br = new BufferedReader(new FileReader("./index"));
         while(br.ready())
         {
             String line = br.readLine();
-            if(line.contains("blob : "))
+            if(line.contains("blob : ") || line.length() < 50)
             {
                 tree.addToTree(line);
             }
@@ -64,9 +79,11 @@ public class Commit {
             }
         }
         BufferedWriter bw = new BufferedWriter(new FileWriter("./index", false));
+        //clears the index
         bw.write("");
         bw.close();
-        tree.addTreeForCommit(oldTreeSha);
+        //adds previous tree
+        tree.addToTree("tree : " + oldTreeSha);
         tree.save();
         br.close();
         return tree.getSha1();
@@ -84,6 +101,36 @@ public class Commit {
     public String getDate(){
         return java.time.LocalDate.now().toString();
     }
+
+    public String createTreeWithoutPrev() throws IOException
+    {
+        //String oldTreeSha = getFirstLine(prevSha1);
+        //writes the staged changes into the tree
+        Tree tree = new Tree();
+        BufferedReader br = new BufferedReader(new FileReader("./index"));
+        while(br.ready())
+        {
+            String line = br.readLine();
+            if(line.contains("blob : "))
+            {
+                tree.addToTree(line);
+            }
+            else
+            {
+                tree.addDirectory(line);
+            }
+        }
+        BufferedWriter bw = new BufferedWriter(new FileWriter("./index", false));
+        //clears the index
+        bw.write("");
+        bw.close();
+        //adds previous tree
+        //tree.addToTree("tree : " + oldTreeSha);
+        tree.save();
+        br.close();
+        return tree.getSha1();
+    }
+
 
   
 
