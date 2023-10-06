@@ -179,6 +179,145 @@ public class CommitTest {
     
     }
 
+    @Test
+    void testFourCommits() throws IOException
+    {
+         Index i = new Index();
+        i.initialize(); 
+        
+         File toAdd1 = new File("toAdd1");
+        PrintWriter out = new PrintWriter("toAdd1");
+        out.print("1");
+        out.close();
+
+        File toAdd2 = new File("toAdd2");
+        PrintWriter out2 = new PrintWriter("toAdd2");
+        out2.print("2");
+        out2.close();
+
+         File toAdd3 = new File("toAdd3");
+        PrintWriter out3 = new PrintWriter("toAdd3");
+        out3.print("3");
+        out3.close();
+
+        File toAdd4 = new File("toAdd4");
+        PrintWriter out4= new PrintWriter("toAdd4");
+        out4.print("4");
+        out4.close();
+
+        File newFolder = new File("newFolder");
+        newFolder.mkdir();
+            File toAdd5 = new File("newFolder/toAdd5");
+            PrintWriter out5 = new PrintWriter("newFolder/toAdd5");
+            out5.print("5");
+            out5.close();
+
+        File newFolder2 = new File("newFolder2");
+        newFolder2.mkdir();
+            File toAdd6 = new File("newFolder2/toAdd6");
+            PrintWriter out6 = new PrintWriter("newFolder2/toAdd6");
+            out6.print("6");
+            out6.close();
+
+        File newFolder3 = new File("newFolder3");
+        newFolder3.mkdir();
+
+        File toAdd7 = new File("toAdd7");
+        PrintWriter out7 = new PrintWriter("toAdd7");
+        out7.print("7");
+        out7.close();
+
+        File toAdd8 = new File("toAdd8");
+        PrintWriter out8 = new PrintWriter("toAdd8");
+        out8.print("8");
+        out8.close();
+
+        File toAdd9 = new File("toAdd9");
+        PrintWriter out9 = new PrintWriter("toAdd9");
+        out9.print("9");
+        out9.close();
+
+        File toAdd10 = new File("toAdd10");
+        PrintWriter out10 = new PrintWriter("toAdd10");
+        out10.print("10");
+        out10.close();
+
+        i.addFile("toAdd1");
+        i.addFile("toAdd2");
+        Commit c1 = new Commit("Oren", "first commit");
+
+        i.addFile("toAdd3");
+        i.addFile("toAdd4");
+        i.addDirectory("newFolder");
+        Commit c2 = new Commit(c1.getSha1(), "Oren", "second commit");
+
+        i.addDirectory("newFolder2");
+        i.addDirectory("newFolder3");
+        i.addFile("toAdd7");
+        i.addFile("toAdd8");
+        Commit c3 = new Commit(c2.getSha1(), "Oren", "third commit");
+
+        i.addFile("toAdd9");
+        i.addFile("toAdd10");
+        Commit c4 = new Commit(c3.getSha1(), "Oren", "fourth commit");
+        
+
+        File blob1 = new File("objects/356a192b7913b04c54574d18c28d46e6395428ab");
+        File blob2 = new File("objects/da4b9237bacccdf19c0760cab7aec4a8359010b0");
+        File blob3 = new File("objects/77de68daecd823babbb58edb1c8e14d7106e83bb");
+        File blob4 = new File("objects/1b6453892473a467d07372d45eb05abc2031647a");
+        File blob5 = new File("objects/ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4");
+        File blob6 = new File("objects/c1dfd96eea8cc2b62785275bca38ac261256e278");
+        File blob7 = new File("objects/902ba3cda1883801594b6e1b452790cc53948fda");
+        File blob8 = new File("objects/fe5dbbcea5ce7e2988b8c69bcfdfde8904aabc1f");
+        File blob9 = new File("objects/0ade7c2cf97f75d009975f4d720d1fa6c19f4897");
+        File blob10 = new File("objects/b1d5781111d84f7b3fe45a0852e59758cd7a87e5");
+        assertTrue(blob1.exists() && blob2.exists() && blob3.exists() && blob4.exists() && blob5.exists());
+        assertTrue(blob6.exists() && blob7.exists() && blob8.exists() && blob9.exists() && blob10.exists());
+
+        File newFolderTree = new File("objects/680541cb5386e6a543f4c8378f6ef71dca778347");
+        String newFolderTreeInfo = TextInFile(newFolderTree);
+        File newFolderTree2 = new File("objects/2aac0f39f4e62df95f1f4554f8e07cee855fc2d4");
+        String newFolderTree2Info = TextInFile(newFolderTree2);
+        File newFolderTree3 = new File("objects/da39a3ee5e6b4b0d3255bfef95601890afd80709");
+        String newFolderTree3Info = TextInFile(newFolderTree3);
+        assertTrue(newFolderTree.exists() && newFolderTree3.exists() && newFolderTree3.exists());
+        assertTrue(newFolderTreeInfo.contains("blob : ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4 : toAdd5"));
+        assertTrue(newFolderTree2Info.contains("blob : c1dfd96eea8cc2b62785275bca38ac261256e278 : toAdd6"));
+        assertTrue(newFolderTree3Info.length() == 0);
+
+        File treeForFirstCommit = new File("objects/ffb9a45711a60ea105d8fc3ab5cb8796faf73148");
+        String treeForFirstCommitInfo = TextInFile(treeForFirstCommit);
+        File treeForSecondCommit =  new File("objects/dbc1b8aca159d8c9840255ada59b0d68c480f672");
+        String treeForSecondCommitInfo = TextInFile(treeForSecondCommit);
+        File treeForThirdCommit = new File("objects/0cfef0b84c8792df110b720a95d86cb30d425460");
+        String treeForThirdCommitInfo = TextInFile(treeForThirdCommit);
+        File treeForFourthCommit = new File("objects/4f43dc033b3a34514864d2a53cbbfb93ea32ca3d");
+        String treeForFourthCommitInfo = TextInFile(treeForFourthCommit);
+        assertTrue(treeForFirstCommitInfo.contains("blob : 356a192b7913b04c54574d18c28d46e6395428ab : toAdd1\n" + //
+                "blob : da4b9237bacccdf19c0760cab7aec4a8359010b0 : toAdd2"));
+        assertTrue(treeForSecondCommitInfo.contains("tree : ffb9a45711a60ea105d8fc3ab5cb8796faf73148\n" + //
+                "tree : 680541cb5386e6a543f4c8378f6ef71dca778347 : newFolder\n" + //
+                "blob : 77de68daecd823babbb58edb1c8e14d7106e83bb : toAdd3\n" + //
+                "blob : 1b6453892473a467d07372d45eb05abc2031647a : toAdd4"));
+        assertTrue(treeForThirdCommitInfo.contains("tree : da39a3ee5e6b4b0d3255bfef95601890afd80709 : newFolder3\ntree : 2aac0f39f4e62df95f1f4554f8e07cee855fc2d4 : newFolder2\ntree : dbc1b8aca159d8c9840255ada59b0d68c480f672\nblob : fe5dbbcea5ce7e2988b8c69bcfdfde8904aabc1f : toAdd8\nblob : 902ba3cda1883801594b6e1b452790cc53948fda : toAdd7"));
+        assertTrue(treeForFourthCommitInfo.contains("blob : b1d5781111d84f7b3fe45a0852e59758cd7a87e5 : toAdd10\ntree : 0cfef0b84c8792df110b720a95d86cb30d425460\nblob : 0ade7c2cf97f75d009975f4d720d1fa6c19f4897 : toAdd9"));
+
+        File firstCommit = new File("objects/782941d47d2ddfed342024dd1c68e6b0766556b7");
+        String firstCommitInfo = TextInFile(firstCommit);
+        File secondCommit = new File("objects/794d704f1e02f08a63f532762a1d423c904585f");
+        String secondCommitInfo = TextInFile(secondCommit);
+        File thirdCommit = new File("objects/24eb8a329c23098ed176228e24f5a8edbf592c14");
+        String thirdCommitInfo = TextInFile(thirdCommit);
+        File fourthCommit = new File("objects/c0724fd40208be21ca786391c65e25b359273654");
+        String fourthCommitInfo = TextInFile(fourthCommit);
+        assertTrue(firstCommit.exists() && secondCommit.exists() && thirdCommit.exists() && fourthCommit.exists());
+        assertTrue(firstCommitInfo.contains("ffb9a45711a60ea105d8fc3ab5cb8796faf73148\n\n794d704f1e02f08a63f532762a1d423c904585f\nOren\n" + c2.getDate() +"\nfirst commit"));
+        assertTrue(secondCommitInfo.contains("dbc1b8aca159d8c9840255ada59b0d68c480f672\n782941d47d2ddfed342024dd1c68e6b0766556b7\n24eb8a329c23098ed176228e24f5a8edbf592c14\nOren\n" + c2.getDate() + "\nsecond commit"));
+        assertTrue(thirdCommitInfo.contains("0cfef0b84c8792df110b720a95d86cb30d425460\n794d704f1e02f08a63f532762a1d423c904585f\nc0724fd40208be21ca786391c65e25b359273654\nOren\n" + c3.getDate() + "\n"));
+        assertTrue(fourthCommitInfo.contains("4f43dc033b3a34514864d2a53cbbfb93ea32ca3d\n24eb8a329c23098ed176228e24f5a8edbf592c14\n\nOren\n" + c4.getDate() + "\nfourth commit"));
+    }
+    
     private String TextInFile(File f) throws IOException
     {
         BufferedReader br = new BufferedReader(new FileReader(f));
@@ -187,7 +326,10 @@ public class CommitTest {
         {
             sb.append(br.readLine() + "\n");
         }
-        sb.setLength(sb.length()-1);
+        if(sb.length() > 0)
+        {
+            sb.setLength(sb.length()-1);
+        }
         return sb.toString();
     }
 

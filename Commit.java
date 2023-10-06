@@ -153,7 +153,7 @@ public class Commit {
             }
             else
             {
-                tree.addDirectory(line);
+                tree.addDirectory(line.substring(50));
             }
         }
         BufferedWriter bw = new BufferedWriter(new FileWriter("./index", false));
