@@ -26,13 +26,12 @@ public class Index
     public Boolean alrInIndex(String fileName) throws IOException
     {
         BufferedReader br = new BufferedReader(new FileReader("index"));
-        Blob currentBlob = new Blob(fileName);
-        String SHA1_of_file = currentBlob.SHA1NameBlob(fileName);
+        String SHA1_of_file = SHA1FilePath(fileName);
         StringBuilder currentString = new StringBuilder();
         while(br.ready())
         {
             currentString.append(br.readLine());
-            if(currentString.indexOf(fileName + " : " + SHA1_of_file) > -1)
+            if(currentString.indexOf(fileName) > -1)
             {
                 br.close ();
                 return true;
@@ -61,20 +60,37 @@ public class Index
         firstAdded = false;
     }
 
-/* 
-        //adds the file to the index if it doesn't already exist
-    public void addFile(String fileName) throws IOException
+    public void editExisting(String s) throws IOException
     {
         BufferedWriter bw = new BufferedWriter(new FileWriter("index", true));
-        Blob currentBlob = new Blob(fileName);
-        String SHA1_of_file = currentBlob.SHA1NameBlob(fileName);
-        if(!alrInIndex(fileName)) //SHOULD IT BE CHECKING IF THE HASH IS THE SAME????
+        File f = new File(s);
+        if(firstAdded)
         {
-            System.out.println(fileName + "does not alr exist");
-            bw.write(fileName + " : " + SHA1_of_file + "\n");
+            bw.write("*edited* "  + f.getName());
+        }
+        else
+        {
+            bw.write("\n*edited* " +  f.getName());
         }
         bw.close();
-    }*/
+        firstAdded = false;
+    }
+
+    public void remove(String s) throws IOException
+    {
+        BufferedWriter bw = new BufferedWriter(new FileWriter("index", true));
+        File f = new File(s);
+        if(firstAdded)
+        {
+            bw.write("*deleted* "  + f.getName());
+        }
+        else
+        {
+            bw.write("\n*deleted* " +  f.getName());
+        }
+        bw.close();
+        firstAdded = false;
+    }
 
     //adds the file to the index if it doesn't already exist
     public void addFile(String fileName) throws IOException
@@ -101,7 +117,7 @@ public class Index
     }
 
     //removes file from the index list and objects folder
-    public void removeFile(String fileName) throws IOException
+    public void removeFileAlreadyStaged(String fileName) throws IOException
     {
         if(alrInIndex(fileName))
         {
@@ -113,11 +129,11 @@ public class Index
             while(br.ready())
             {
                 currentString.append(br.readLine());
-                if(currentString.indexOf(fileName + " : " + SHA1_of_file) == -1)
+                if(currentString.indexOf(fileName) == -1)
                 {
                     newIndex.append(currentString + "\n");
                 }
-                currentString.setLength(0);
+                //currentString.setLength(0);
                 
             }
             BufferedWriter bw = new BufferedWriter(new FileWriter("index", false));

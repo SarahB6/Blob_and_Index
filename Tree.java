@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -14,10 +15,12 @@ import java.util.HashMap;
 public class Tree {
     private String sha1;
     HashMap <String, TreeEntry> myMap;
+    String oldTree;
 
     public Tree ()
     {
         myMap = new HashMap <String, TreeEntry> ();
+        oldTree = "";
     }
 
     public void addTreeForCommit(String sha) throws IOException
@@ -117,21 +120,66 @@ public class Tree {
         myFile.renameTo (file2);
     }
     
-    public void addToTree (String typeAndContent)
+    public void addToTree (String typeAndContent) throws IOException
     {
         if (typeAndContent.substring (0,4).equals ("blob"))
         {
             myMap.put (typeAndContent.substring (7,47), new TreeEntry ("blob", typeAndContent.substring (50)));//CHANGED TO 50
         }
-        else if(typeAndContent.length() < 50)
+        else if(typeAndContent.substring (0,4).equals ("tree") && typeAndContent.length() < 50)
         {
-            myMap.put (typeAndContent.substring (7,47), new TreeEntry ("tree", ""));//CHANGED TO 50
+            myMap.put (typeAndContent.substring (7,47), new TreeEntry ("tree", ""));//CHANGED TO 50 //this is for a commit tree
+            oldTree = typeAndContent.substring(7,47);
+        }
+        else if(typeAndContent.contains("*deleted*"))
+        {
+            deleteObj(typeAndContent, oldTree);
+        }
+        else if(typeAndContent.contains("*edited"))
+        {
+
         }
         else
         {
             myMap.put (typeAndContent.substring (7,47), new TreeEntry ("tree", typeAndContent.substring(50)));
         }
     }
+
+    private void deleteObj(String fileName, String treeSha) throws IOException
+    {
+        File f = new File("./objects/" + treeSha);
+        if(f.exists())
+        {
+            BufferedReader br = new BufferedReader(new FileReader(f));
+            StringBuilder thisInfo = new StringBuilder();
+            String oldTreeShaOfThisTree = "";
+            Boolean isInThisTree = false;
+            if(br.ready())
+            {
+                oldTreeShaOfThisTree = br.readLine();
+            }
+            while(br.ready())
+            {
+                String thisLine = br.readLine();
+                if(thisLine.contains(fileName))
+                {
+                    isInThisTree = true;
+                }
+                thisInfo.append(thisLine + "\n");
+                
+            }
+            br.close();
+            String infoAsString = thisInfo.toString();
+            if(infoAsString.contains(fileName))
+            {
+                
+            }
+
+
+        }
+    }
+
+
     
     public void removeBlob (String fileName)
     {

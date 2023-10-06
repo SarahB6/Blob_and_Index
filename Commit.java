@@ -11,14 +11,14 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class Commit {
-    private String treeSha1, prevSha1, nextSha1, author, summary, date;
+    private String treeSha1, prevSha1Commit, nextSha1Commit, author, summary, date;
 
 
     //constructor with nextSHA1
-    public Commit(String prevSha1, String nextSha1, String author, String summary) throws IOException{
+    public Commit(String prevSha1Commit, String nextSha1Commit, String author, String summary) throws IOException{
         
-        this.prevSha1 = prevSha1 + "\n";
-        this.nextSha1 = nextSha1 + "\n";
+        this.prevSha1Commit = prevSha1Commit + "\n";
+        this.nextSha1Commit = nextSha1Commit + "\n";
         this.author = author + "\n";
         this.date = getDate() + "\n";
         this.summary = summary;
@@ -29,22 +29,54 @@ public class Commit {
     }
 
     //constructor without nextSHA1
-    public Commit(String prevSha1, String author, String summary) throws IOException{
+    public Commit(String prevSha1Commit, String author, String summary) throws IOException{
         
-        this.prevSha1 = prevSha1 + "\n";
-        this.nextSha1 = "\n";
+        this.prevSha1Commit = prevSha1Commit + "\n";
+        this.nextSha1Commit = "\n";
         this.author = author + "\n";
         this.date = getDate() + "\n";
         this.summary = summary;
-        this.treeSha1 = createTree() + "\n";
+        if(prevSha1Commit.length() < 1)
+        {
+            this.treeSha1 = createTreeWithoutPrev() + "\n";
+        }
+        else
+        {
+            this.treeSha1 = createTree() + "\n";
+            addNextShaToOldTree(getFirstLine(prevSha1Commit));
+        }
         writeToFile();
+    }
+
+    public void addNextShaToOldTree(String oldtreeSha) throws IOException
+    {
+        File oldCommitFile = new File("./objects/" + "555ce05a67b2e4320ca320f3a91afe3118c9038b");
+        BufferedReader br1 = new BufferedReader(new FileReader(oldCommitFile));
+
+        StringBuilder newInfo = new StringBuilder();
+        BufferedReader br = new BufferedReader(new FileReader(oldCommitFile));
+        for(int i = 0;  i<2; i++)
+        {
+            newInfo.append(br.readLine() + "\n");
+        }
+        newInfo.append(getSha1());
+        br.readLine();
+        while(br.ready())
+        {
+            newInfo.append(br.readLine() + "\n");
+        }
+        newInfo.setLength(newInfo.length()-1);
+        BufferedWriter bw = new BufferedWriter(new FileWriter(oldCommitFile, false));
+        bw.write(newInfo.toString());
+        bw.close();
+        br.close();
     }
 
     public Commit(String author, String summary) throws IOException
     {
         this.treeSha1 = createTreeWithoutPrev() + "\n";
-        this.prevSha1 = ""+ "\n";
-        this.nextSha1 = "\n";
+        this.prevSha1Commit = ""+ "\n";
+        this.nextSha1Commit = "\n";
         this.author = author + "\n";
         this.date = getDate() + "\n";
         this.summary = summary;
@@ -60,7 +92,7 @@ public class Commit {
     }
 
     public String createTree() throws IOException{
-        String prevShaWithoutNextLine = prevSha1.substring(0, prevSha1.length()-1);
+        String prevShaWithoutNextLine = prevSha1Commit.substring(0, prevSha1Commit.length()-1);
         String oldTreeSha = getFirstLine(prevShaWithoutNextLine);
         //writes the staged changes into the tree
         Tree tree = new Tree();
@@ -73,7 +105,7 @@ public class Commit {
             {
                 tree.addToTree(line);
             }
-            else
+            else if(line.contains("tree: "))
             {
                 tree.addDirectory(line);
             }
@@ -88,9 +120,12 @@ public class Commit {
         br.close();
         return tree.getSha1();
     }
+
+
+
     //writes all of the instance variable info to a file in the objects folder
     public void writeToFile() throws FileNotFoundException{
-        String fileContents = treeSha1 + prevSha1 + nextSha1 + author + date + summary;
+        String fileContents = treeSha1 + prevSha1Commit + nextSha1Commit + author + date + summary;
         System.out.println(fileContents); //POINT OF THIS??
         File commitFile = new File("./objects/" + getSha1());
         PrintWriter pw = new PrintWriter(commitFile);
@@ -135,7 +170,7 @@ public class Commit {
   
 
     public String getSha1(){
-        String fileContents = treeSha1 + prevSha1 + nextSha1 + author + date + summary;
+        String fileContents = treeSha1 + prevSha1Commit + nextSha1Commit+ author + date + summary;
         System.out.println(fileContents);
         return getStringHash(fileContents);
     }

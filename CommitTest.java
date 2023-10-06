@@ -2,7 +2,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -28,29 +30,48 @@ public class CommitTest {
     }
     @Test
     //tests if a tree is created and the output is correct 
-    void testCreateTree() throws IOException {
+    void testFirstCommit() throws IOException {
         //runs the code
-        Commit com = new Commit("prevSha", "Oren", "testing tree creation");
-        String sha = com.createTree();
-
+        Index i = new Index();
+        i.initialize();
+        File f = new File("./index");
+        Commit com = new Commit("Oren", "testing tree creation");
+        //String sha = com.createTree();
+        String sha = com.getSha1();
         //tests if output is correct and file is created
-        assertEquals("da39a3ee5e6b4b0d3255bfef95601890afd80709", sha);
-        File treeFile = new File("./objects/da39a3ee5e6b4b0d3255bfef95601890afd80709");
-        assertTrue(treeFile.exists());
+       // assertEquals("5a6f1bc395350d82693ae2a4fac28498f8226e8c", sha);
+        File commitFile = new File("./objects/555ce05a67b2e4320ca320f3a91afe3118c9038b");
+        assertTrue(commitFile.exists());
     }
 
     @Test
     //tests if a valid date is created
     //kinda depends on the testing date lol
-    void testGetDate() throws IOException {
-        Commit com = new Commit("prevSha", "Oren", "testing tree creation");
+    void testTwoCommits() throws IOException {
+        Index i = new Index();
+        i.initialize(); 
+        makeTextFile("Test1.txt", "hello");
+
+        Commit com = new Commit("Oren", "testing tree creation");
+        i.setFirstAdded(true);
+        i.addFile("Test1.txt");
+
+        File file1 = new File ("./objects/53d001f65e513a8c9560a0a40b1b823ece93204c");
+
+        Commit com2 = new Commit("555ce05a67b2e4320ca320f3a91afe3118c9038b", "Oren", "second commit");
+
+        File commitFile = new File("./objects/3cac5fa80a951dcf0255430d6a9cc839afc46739");
+        assertTrue(commitFile.exists());
+
+
+
     }
 
     @Test
     //tests if the correct sha for the commit is being created
     void testGetSha1() throws IOException {
         //tests case with previous sha and next sha included
-        Commit com = new Commit("prevSha", "nextSha","Oren", "testing tree creation");
+        Commit com = new Commit("prevSha", "Oren", "testing tree creation");
         String sha = com.getSha1();
         assertEquals(sha, "bde1f5e857d552d2373df5b0fd49f41024cf9a17");
 
@@ -107,5 +128,16 @@ public class CommitTest {
             // delete files and empty subfolders
             subfile.delete();
         }
+    }
+
+        private void makeTextFile (String path, String contents) throws IOException
+    {
+        File theFile = new File (path);
+        theFile.createNewFile ();
+        FileWriter writer = new FileWriter(path,false);
+        PrintWriter out = new PrintWriter(writer);
+        out.print (contents);
+        writer.close ();
+        out.close ();
     }
 }

@@ -1,6 +1,7 @@
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -44,11 +45,7 @@ public class IndexTester {
             }
         }
         myObjects.delete();
-        /*
-         * Utils.deleteFile("junit_example_file_data.txt");
-         * Utils.deleteFile("index");
-         * Utils.deleteDirectory("objects");
-         */
+
     }
 
     @Test
@@ -88,7 +85,7 @@ public class IndexTester {
         scanner.close();
 
         //makes sure addFile properly adds an entry to the index file
-        assertTrue(fileContents.contains ("myTesterText.txt : d97be938d56fa50d14940b3f1ce7cabfa830afb5"));
+        assertTrue(fileContents.contains ("blob : d97be938d56fa50d14940b3f1ce7cabfa830afb5 : myTesterText.txt"));
     }
 
     @Test
@@ -101,14 +98,13 @@ public class IndexTester {
         out.close();
         Index i = new Index ();
         i.initialize ();
+
+        assertFalse (i.alrInIndex ("myTesterText.txt"));
         i.addFile ("myTesterText.txt");
         
         //checks whether "already in index" method positive for duplicates (it should be)
         assertTrue (i.alrInIndex ("myTesterText.txt"));
-        i.removeFile ("myTesterText.txt");
-
-        //checks whether "already in index" method negative when duplicate removed from inded (it should be)
-        assertFalse (i.alrInIndex ("myTesterText.txt"));
+       
     }
 
     @Test
@@ -121,20 +117,24 @@ public class IndexTester {
         out.close();
         Index i = new Index ();
         i.initialize();
+        File checking = new File ("./index");
+        
         i.addFile("myTesterText.txt");
-        i.removeFile ("myTesterText.txt");
-        File checking = new File ("index");
-
-        //makes sure file entry has been removed from index
-        assertTrue(checking.length () == 0);
-        File shouldNotBeDeleted = new File ("./objects/d97be938d56fa50d14940b3f1ce7cabfa830afb5");
-
-        //checks to see if removed file's Blob has been deleted from the objects folder (it shouldn't be deleted)
-        assertTrue (shouldNotBeDeleted.exists ());
+        i.removeFileAlreadyStaged ("myTesterText.txt");
+        FileReader fr = new FileReader(checking);
+        StringBuilder sb = new StringBuilder();
+        while(fr.ready())
+        {
+            sb.append(fr.read());
+        }
+        fr.close();
+        String fileContents = sb.toString();
+        assertTrue(checking.exists());
+        assertTrue(fileContents.length() == 0);
     }
 
     @Test
-    @DisplayName("Test if adding multiple files works correctly (extra credit)")
+    @DisplayName("Test if adding multiple files works correctly")
     void testAddingMultipleFilesEC () throws IOException, NoSuchAlgorithmException {
         //making 2 files
         File myTesterText1 = new File ("myTesterText1.txt");
@@ -171,7 +171,9 @@ public class IndexTester {
         scanner.close();
 
         //makes sure index has correct contents and length after addition of multiple files
-        assertTrue(fileContents.contains ("myTesterText1.txt : 23f1a98a0bf8a74a5be0b7f81cec8b20357d0057") && count == 2);
+        assertTrue(fileContents.contains ("blob : 23f1a98a0bf8a74a5be0b7f81cec8b20357d0057 : myTesterText1.txt") && 
+        fileContents.contains("blob : 0c38c3c03a5cd84b59c1a100c9a09225a44f8f02 : myTesterText2.txt")
+        && count == 2);
     }
 
     @Test
@@ -196,8 +198,8 @@ public class IndexTester {
         i.addFile ("myTesterText2.txt");
 
         //removing files
-        i.removeFile ("myTesterText1.txt");
-        i.removeFile ("myTesterText2.txt");
+        i.removeFileAlreadyStaged ("myTesterText1.txt");
+        i.removeFileAlreadyStaged ("myTesterText2.txt");
         File checking = new File ("index");
 
         //makes sure index contains nothing after all entries have been removed
@@ -208,4 +210,45 @@ public class IndexTester {
         //makes sure two removed files have not had their corresponding Blobs deleted from the objects folder
         assertTrue (shouldNotBeDeleted1.exists () && shouldNotBeDeleted2.exists ());
     }
+
+    @Test
+    @DisplayName("Test if add directory works")
+    void testAddDirectory () throws IOException, NoSuchAlgorithmException {
+        File AdvancedDirectory = new File("AdvancedDirectory");
+        AdvancedDirectory.mkdirs();
+        File InsideFolder = new File("AdvancedDirectory/InsideFolder");
+        InsideFolder.mkdir();
+        File example3 = new File("AdvancedDirectory/InsideFolder/example3.txt");
+        PrintWriter out3 = new PrintWriter("AdvancedDirectory/InsideFolder/example3.txt");
+        out3.print("hello3");
+        out3.close();
+
+        File example1 = new File("AdvancedDirectory/example1.txt");
+        PrintWriter out1 = new PrintWriter("AdvancedDirectory/InsideFolder/example3.txt");
+        out1.print("hello");
+        out1.close();
+
+        File example2 = new File("AdvancedDirectory/example2.txt");
+        PrintWriter out2 = new PrintWriter("AdvancedDirectory/InsideFolder/example3.txt");
+        out1.print("hello2");
+        out1.close();
+
+
+        Index i = new Index ();
+        i.initialize();
+        i.addDirectory("AdvancedDirectory");
+        
+
+        File checking = new File ("index");
+        FileReader fr = new FileReader(checking);
+        StringBuilder sb = new StringBuilder();
+        while(fr.ready())
+        {
+            sb.append((char)fr.read());
+        }
+        fr.close();
+        String fileContents = sb.toString();
+        assertTrue(fileContents.contains("tree : f75f68b93c7fdea26e270092dd1e74b42361767b : AdvancedDirectory"));
+    }
+    
 }
