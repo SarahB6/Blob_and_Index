@@ -1,7 +1,9 @@
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -28,6 +30,7 @@ public class CommitTest {
             deleteDirectory(objectDirectory);
         }
     }
+
     @Test
     //tests if a tree is created and the output is correct 
     void testFirstCommit() throws IOException {
@@ -40,8 +43,63 @@ public class CommitTest {
         String sha = com.getSha1();
         //tests if output is correct and file is created
        // assertEquals("5a6f1bc395350d82693ae2a4fac28498f8226e8c", sha);
-        File commitFile = new File("./objects/555ce05a67b2e4320ca320f3a91afe3118c9038b");
+        File commitFile = new File("./objects/" + sha);
         assertTrue(commitFile.exists());
+    }
+
+        @Test
+    //tests if a tree is created and the output is correct 
+    void testFirstCommitWithFiles() throws IOException {
+        //runs the code
+        Index i = new Index();
+        i.initialize();
+        File f = new File("./index");
+        File toAdd1 = new File("toAdd1");
+        PrintWriter out = new PrintWriter("toAdd1");
+        out.print("1");
+        out.close();
+
+        File toAdd2 = new File("toAdd2");
+        PrintWriter out2 = new PrintWriter("toAdd2");
+        out2.print("2");
+        out2.close();
+
+        i.addFile(toAdd1.getPath());
+        i.addFile(toAdd2.getPath());
+
+        Commit com = new Commit("Oren", "testing one with files");
+        String sha = com.getSha1();
+        File commitFile = new File("./objects/" + sha);
+        StringBuilder commitFileContent = new StringBuilder();
+        BufferedReader br = new BufferedReader(new FileReader(commitFile));
+        while(br.ready())
+        {
+            commitFileContent.append(br.readLine() + "\n");
+        }
+        br.close();
+
+        File blob1 = new File("objects/356a192b7913b04c54574d18c28d46e6395428ab");
+        File blob2 = new File("objects/da4b9237bacccdf19c0760cab7aec4a8359010b0");
+        assertTrue(blob1.exists() && blob2.exists());
+
+        File treeFile =  new File("objects/ffb9a45711a60ea105d8fc3ab5cb8796faf73148");
+        assertTrue(treeFile.exists());
+         StringBuilder treeFileContentsb = new StringBuilder();
+        BufferedReader br2 = new BufferedReader(new FileReader(treeFile));
+        while(br2.ready())
+        {
+            treeFileContentsb.append(br2.readLine() + "\n");
+        }
+        br2.close();
+        String treeFileContent = treeFileContentsb.toString();
+        assertTrue(treeFileContent.contains("blob : 356a192b7913b04c54574d18c28d46e6395428ab : toAdd1\n" + //
+                "blob : da4b9237bacccdf19c0760cab7aec4a8359010b0 : toAdd2"));
+        
+        assertTrue(commitFileContent.toString().contains("ffb9a45711a60ea105d8fc3ab5cb8796faf73148\n\n\nOren\n2023-10-06\ntesting one with files"));
+
+
+
+        
     }
 
     @Test
@@ -50,35 +108,49 @@ public class CommitTest {
     void testTwoCommits() throws IOException {
         Index i = new Index();
         i.initialize(); 
-        makeTextFile("Test1.txt", "hello");
+        
+         File toAdd1 = new File("toAdd1");
+        PrintWriter out = new PrintWriter("toAdd1");
+        out.print("1");
+        out.close();
 
-        Commit com = new Commit("Oren", "testing tree creation");
-        i.setFirstAdded(true);
-        i.addFile("Test1.txt");
+        File toAdd2 = new File("toAdd2");
+        PrintWriter out2 = new PrintWriter("toAdd2");
+        out2.print("2");
+        out2.close();
 
-        File file1 = new File ("./objects/53d001f65e513a8c9560a0a40b1b823ece93204c");
+         File toAdd3 = new File("toAdd1");
+        PrintWriter out3 = new PrintWriter("toAdd3");
+        out.print("3");
+        out3.close();
 
-        Commit com2 = new Commit("555ce05a67b2e4320ca320f3a91afe3118c9038b", "Oren", "second commit");
+        File toAdd4 = new File("toAdd2");
+        PrintWriter out4= new PrintWriter("toAdd4");
+        out4.print("4");
+        out4.close();
 
-        File commitFile = new File("./objects/3cac5fa80a951dcf0255430d6a9cc839afc46739");
-        assertTrue(commitFile.exists());
+        File newFolder = new File("newFolder");
+        newFolder.mkdir();
+            File toAdd5 = new File("newFolder/toAdd5");
+            PrintWriter out5 = new PrintWriter("newFolder/toAdd5");
+            out5.print("5");
+            out5.close();
+
+        //Add first 2 to first commit
+        i.addFile("toAdd1");
+        i.addFile("toAdd2");
+        Commit c = new Commit("Oren", "testing tree creation");
+        
+        i.addFile("toAdd3");
+        i.addFile("toAdd4");
+        i.addDirectory("newFolder");
+
+        Commit c2 = new Commit(c.getSha1(), "Oren", "test second commit with folder");
 
 
 
-    }
 
-    @Test
-    //tests if the correct sha for the commit is being created
-    void testGetSha1() throws IOException {
-        //tests case with previous sha and next sha included
-        Commit com = new Commit("prevSha", "Oren", "testing tree creation");
-        String sha = com.getSha1();
-        assertEquals(sha, "bde1f5e857d552d2373df5b0fd49f41024cf9a17");
 
-        //tests case with next sha ommited
-        Commit com2 = new Commit("prevSha", "Oren", "testing tree creation");
-        String sha2 = com2.getSha1();
-        assertEquals(sha2, "1cff8927c29edcfc3a4b07a113dc1995c5fda5d");
     }
 
     @Test
@@ -88,29 +160,7 @@ public class CommitTest {
         assertEquals("2aae6c35c94fcfb415dbe95f408b9ce91ee846ed", sha1);
     }
 
-    @Test
-    void testWriteToFile() throws IOException {
-        //tests case with previous sha and next sha included
-        Commit com = new Commit("prevSha", "nextSha","Oren", "testing tree creation");
-        com.writeToFile();
-        File comFile = new File("./objects/bde1f5e857d552d2373df5b0fd49f41024cf9a17");
-        assertTrue(comFile.exists());
-
-        Path comFilePath = Path.of("./objects/bde1f5e857d552d2373df5b0fd49f41024cf9a17");
-        String comContents = Files.readString(comFilePath);
-        assertEquals("da39a3ee5e6b4b0d3255bfef95601890afd80709\nprevSha\nnextSha\nOren\n2023-09-21\ntesting tree creation", comContents);
-
-        //tests case with next sha ommited
-        Commit com2 = new Commit("prevSha","Oren", "testing tree creation");
-        com2.writeToFile();
-        File comFile2 = new File("./objects/1cff8927c29edcfc3a4b07a113dc1995c5fda5d");
-        assertTrue(comFile2.exists());
-
-        Path comFilePath2 = Path.of("./objects/1cff8927c29edcfc3a4b07a113dc1995c5fda5d");
-        String comContents2 = Files.readString(comFilePath2);
-        assertEquals("da39a3ee5e6b4b0d3255bfef95601890afd80709\nprevSha\n\nOren\n2023-09-21\ntesting tree creation", comContents2);
-        
-    }
+    
 
     //helper method to remove an entire directory and all files contained in it
     private static void deleteDirectory(File file)

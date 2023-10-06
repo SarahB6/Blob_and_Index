@@ -2,6 +2,7 @@
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,14 +14,13 @@ import java.util.Formatter;
 public class Index 
 {
     File f;
-    boolean firstAdded;
+    private boolean isFirstAdded() throws IOException
+    {
+       String s = SHA1FilePath("./index");
+       return s.equals("da39a3ee5e6b4b0d3255bfef95601890afd80709");
+    }
     public Index()
     {
-        firstAdded = true;
-    }
-    public void setFirstAdded(Boolean which)
-    {
-        firstAdded = which;
     }
     //checks if the file is already in the Index list
     public Boolean alrInIndex(String fileName) throws IOException
@@ -48,7 +48,7 @@ public class Index
         File f = new File(thisDirectory);
         Tree thisDirectoryTree = new Tree();
         String shaOfThisDirectoryTree = thisDirectoryTree.addDirectory(thisDirectory);
-        if(firstAdded)
+        if(isFirstAdded())
         {
             bw.write("tree : " + shaOfThisDirectoryTree + " : " + f.getName()); //FILE NAME IDK HOW TO GET IT THO
         }
@@ -57,14 +57,13 @@ public class Index
             bw.write("\ntree : " + shaOfThisDirectoryTree + " : " + f.getName());
         }
         bw.close();
-        firstAdded = false;
     }
 
     public void editExisting(String s) throws IOException
     {
         BufferedWriter bw = new BufferedWriter(new FileWriter("index", true));
         File f = new File(s);
-        if(firstAdded)
+        if(isFirstAdded())
         {
             bw.write("*edited* "  + f.getName());
         }
@@ -73,14 +72,13 @@ public class Index
             bw.write("\n*edited* " +  f.getName());
         }
         bw.close();
-        firstAdded = false;
     }
 
     public void remove(String s) throws IOException
     {
         BufferedWriter bw = new BufferedWriter(new FileWriter("index", true));
         File f = new File(s);
-        if(firstAdded)
+        if(isFirstAdded())
         {
             bw.write("*deleted* "  + f.getName());
         }
@@ -89,7 +87,6 @@ public class Index
             bw.write("\n*deleted* " +  f.getName());
         }
         bw.close();
-        firstAdded = false;
     }
 
     //adds the file to the index if it doesn't already exist
@@ -102,7 +99,7 @@ public class Index
         if(!alrInIndex(fileName)) //SHOULD IT BE CHECKING IF THE HASH IS THE SAME????
         {
             System.out.println(fileName + "does not alr exist");       
-            if(firstAdded)
+            if(isFirstAdded())
             {
                 bw.write("blob : " + SHA1_of_file + " : " + fileName); //FILE NAME IDK HOW TO GET IT THO
             }
@@ -113,7 +110,6 @@ public class Index
         }
         
         bw.close();
-        firstAdded = false;
     }
 
     //removes file from the index list and objects folder

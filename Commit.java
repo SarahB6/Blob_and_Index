@@ -50,7 +50,8 @@ public class Commit {
 
     public void addNextShaToOldTree(String oldtreeSha) throws IOException
     {
-        File oldCommitFile = new File("./objects/" + "555ce05a67b2e4320ca320f3a91afe3118c9038b");
+        String s =  prevSha1Commit.substring(0, prevSha1Commit.length()-1);
+        File oldCommitFile = new File("./objects/" + s);
         BufferedReader br1 = new BufferedReader(new FileReader(oldCommitFile));
 
         StringBuilder newInfo = new StringBuilder();
@@ -59,7 +60,7 @@ public class Commit {
         {
             newInfo.append(br.readLine() + "\n");
         }
-        newInfo.append(getSha1());
+        newInfo.append(getSha1() + "\n");
         br.readLine();
         while(br.ready())
         {
@@ -105,9 +106,9 @@ public class Commit {
             {
                 tree.addToTree(line);
             }
-            else if(line.contains("tree: "))
+            else if(line.contains("tree : "))
             {
-                tree.addDirectory(line);
+                tree.addDirectory(line.substring(50));
             }
         }
         BufferedWriter bw = new BufferedWriter(new FileWriter("./index", false));
