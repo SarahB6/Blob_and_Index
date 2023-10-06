@@ -119,12 +119,12 @@ public class CommitTest {
         out2.print("2");
         out2.close();
 
-         File toAdd3 = new File("toAdd1");
+         File toAdd3 = new File("toAdd3");
         PrintWriter out3 = new PrintWriter("toAdd3");
-        out.print("3");
+        out3.print("3");
         out3.close();
 
-        File toAdd4 = new File("toAdd2");
+        File toAdd4 = new File("toAdd4");
         PrintWriter out4= new PrintWriter("toAdd4");
         out4.print("4");
         out4.close();
@@ -139,18 +139,56 @@ public class CommitTest {
         //Add first 2 to first commit
         i.addFile("toAdd1");
         i.addFile("toAdd2");
-        Commit c = new Commit("Oren", "testing tree creation");
+        Commit c = new Commit("Oren", "first commit");
         
         i.addFile("toAdd3");
         i.addFile("toAdd4");
         i.addDirectory("newFolder");
 
-        Commit c2 = new Commit(c.getSha1(), "Oren", "test second commit with folder");
+        Commit c2 = new Commit(c.getSha1(), "Oren", "second commit");
 
+        File blob1 = new File("objects/356a192b7913b04c54574d18c28d46e6395428ab");
+        File blob2 = new File("objects/da4b9237bacccdf19c0760cab7aec4a8359010b0");
+        File blob3 = new File("objects/77de68daecd823babbb58edb1c8e14d7106e83bb");
+        File blob4 = new File("objects/1b6453892473a467d07372d45eb05abc2031647a");
+        File blob5 = new File("objects/ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4");
+        assertTrue(blob1.exists() && blob2.exists() && blob3.exists() && blob4.exists() && blob5.exists());
 
+        File directoryTree = new File("objects/680541cb5386e6a543f4c8378f6ef71dca778347");
+        String directoryTreeInfo = TextInFile(directoryTree);
+        File treeForFirstCommit = new File("objects/ffb9a45711a60ea105d8fc3ab5cb8796faf73148");
+        String treeForFirstCommitInfo = TextInFile(treeForFirstCommit);
+        File treeForSecondCommit =  new File("objects/dbc1b8aca159d8c9840255ada59b0d68c480f672");
+        String treeForSecondCommitInfo = TextInFile(treeForSecondCommit);
+        assertTrue(directoryTree.exists() && treeForFirstCommit.exists() && treeForSecondCommit.exists());
+        assertTrue(directoryTreeInfo.contains("blob : ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4 : toAdd5"));
+        assertTrue(treeForFirstCommitInfo.contains("blob : 356a192b7913b04c54574d18c28d46e6395428ab : toAdd1\n" + //
+                "blob : da4b9237bacccdf19c0760cab7aec4a8359010b0 : toAdd2"));
+        assertTrue(treeForSecondCommitInfo.contains("tree : ffb9a45711a60ea105d8fc3ab5cb8796faf73148\n" + //
+                "tree : 680541cb5386e6a543f4c8378f6ef71dca778347 : newFolder\n" + //
+                "blob : 77de68daecd823babbb58edb1c8e14d7106e83bb : toAdd3\n" + //
+                "blob : 1b6453892473a467d07372d45eb05abc2031647a : toAdd4"));
 
+        File firstCommit = new File("objects/782941d47d2ddfed342024dd1c68e6b0766556b7");
+        String firstCommitInfo = TextInFile(firstCommit);
+        File secondCommit = new File("objects/794d704f1e02f08a63f532762a1d423c904585f");
+        String secondCommitInfo = TextInFile(secondCommit);
+        assertTrue(firstCommit.exists() && secondCommit.exists());
+        assertTrue(firstCommitInfo.contains("ffb9a45711a60ea105d8fc3ab5cb8796faf73148\n\n794d704f1e02f08a63f532762a1d423c904585f\nOren\n" + c2.getDate() +"\nfirst commit"));
+        assertTrue(secondCommitInfo.contains("dbc1b8aca159d8c9840255ada59b0d68c480f672\n782941d47d2ddfed342024dd1c68e6b0766556b7\n\nOren\n" + c2.getDate() + "\nsecond commit"));
+    
+    }
 
-
+    private String TextInFile(File f) throws IOException
+    {
+        BufferedReader br = new BufferedReader(new FileReader(f));
+        StringBuilder sb = new StringBuilder();
+        while (br.ready())
+        {
+            sb.append(br.readLine() + "\n");
+        }
+        sb.setLength(sb.length()-1);
+        return sb.toString();
     }
 
     @Test
