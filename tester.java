@@ -21,7 +21,7 @@ public class tester
         i.addFile("toAdd8");
         Commit c3 = new Commit(c2.getSha1(), "Oren", "third commit");
 
-        i.addFile("toAdd9");
+        i.remove("toAdd7");
         i.addFile("toAdd10");
         Commit c4 = new Commit(c3.getSha1(), "Oren", "fourth commit");
 
