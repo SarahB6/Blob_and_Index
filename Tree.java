@@ -145,6 +145,66 @@ public class Tree {
         }
     }
 
+    private void editObj(String fileName, String treeSha) throws IOException
+    {
+        Blob newBlob = new Blob(fileName);
+        String sha = newBlob.SHA1NameBlob(fileName);
+        File thisF = new File("./objects/" + treeSha);
+        if(thisF.exists())
+        {
+            BufferedReader br = new BufferedReader(new FileReader(thisF));
+            StringBuilder thisInfo = new StringBuilder();
+            String oldTreeShaOfThisTree = "";
+            Boolean isInThisTree = false;
+            while(br.ready())
+            {
+                String line = br.readLine();
+                if(line.contains("tree : ") && line.length() < 50)
+                {
+                    oldTreeShaOfThisTree = line.substring(7,47);
+
+                }
+                else
+                {
+                    if(line.contains(fileName))
+                    {
+                        isInThisTree = true;
+                    }
+                    else
+                    {
+                        thisInfo.append(line + "\n");
+                    }
+                }
+                
+            }
+            br.close();
+            if(isInThisTree)
+            {
+                thisInfo.append("tree : " + oldTreeShaOfThisTree);
+            }
+            String[] arr = thisInfo.toString().split("\n");
+            for(int i = 0; i<arr.length; i++)
+            {
+                if (arr[i].length() == 0)
+                {
+
+                }
+                else if(arr[i].contains("blob : ") || arr[i].length() < 50)
+                {
+                    addToTree(arr[i], treeSha);
+                }
+                else
+                {
+                    addDirectory(arr[i]);
+                }
+            }
+           
+            if(!isInThisTree)
+            {
+                editObj(fileName, oldTreeShaOfThisTree);   
+            }
+    }
+
     private void deleteObj(String fileName, String treeSha) throws IOException
     {
         File f = new File("./objects/" + treeSha);
