@@ -135,9 +135,9 @@ public class Tree {
         {
             deleteObj(typeAndContent.substring(10), oldTree);//Old Tree is empty
         }
-        else if(typeAndContent.contains("*edited"))
+        else if(typeAndContent.contains("*edited*"))
         {
-
+            editObj(typeAndContent.substring(9), oldTree);
         }
         else
         {
@@ -147,8 +147,17 @@ public class Tree {
 
     private void editObj(String fileName, String treeSha) throws IOException
     {
-        Blob newBlob = new Blob(fileName);
-        String sha = newBlob.SHA1NameBlob(fileName);
+        File editedFile = new File(fileName);
+        if(editedFile.isDirectory())
+        {
+            addDirectory(fileName); //does this work like does it make blobs and stuff
+        }
+        else
+        {
+            Blob newBlob = new Blob(fileName);
+            String sha = newBlob.SHA1NameBlob(fileName);
+        }
+        
         File thisF = new File("./objects/" + treeSha);
         if(thisF.exists())
         {
@@ -182,6 +191,7 @@ public class Tree {
             {
                 thisInfo.append("tree : " + oldTreeShaOfThisTree);
             }
+
             String[] arr = thisInfo.toString().split("\n");
             for(int i = 0; i<arr.length; i++)
             {
@@ -201,8 +211,9 @@ public class Tree {
            
             if(!isInThisTree)
             {
-                editObj(fileName, oldTreeShaOfThisTree);   
-            }
+                editObj(fileName, oldTreeShaOfThisTree); 
+            }  
+        }
     }
 
     private void deleteObj(String fileName, String treeSha) throws IOException

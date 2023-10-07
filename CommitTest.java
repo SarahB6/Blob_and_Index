@@ -334,6 +334,12 @@ public class CommitTest {
     }
 
     @Test
+    void testWithEditandDelete() throws IOException
+    {
+        
+    }
+
+    @Test
     //simple test to see if hash method is working
     void testGetStringHash() {
         String sha1 = Commit.getStringHash("hello world");
