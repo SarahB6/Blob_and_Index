@@ -90,8 +90,8 @@ public class TreeTester
         Index i = new Index();
         i.initialize ();
         Tree myTree = new Tree ();
-        myTree.addToTree("tree : bd1ccec139dead5ee0d8c3a0499b42a7d43ac44b");
-        myTree.addToTree("blob : 81e0268c84067377a0a1fdfb5cc996c93f6dcf9f : file1.txt");
+        myTree.addToTree("tree : bd1ccec139dead5ee0d8c3a0499b42a7d43ac44b", "");
+        myTree.addToTree("blob : 81e0268c84067377a0a1fdfb5cc996c93f6dcf9f : file1.txt", "");
         myTree.save();
         File checking = new File ("./objects/" + getSHA1OfString ("blob : 81e0268c84067377a0a1fdfb5cc996c93f6dcf9f : file1.txt\ntree : bd1ccec139dead5ee0d8c3a0499b42a7d43ac44b"));
         //checks to make sure Tree file has been saved to objects folder with correct SHA
@@ -110,7 +110,7 @@ public class TreeTester
         Index i = new Index();
         i.initialize ();
         Tree myTree = new Tree ();
-        myTree.addToTree("blob : 81e0268c84067377a0a1fdfb5cc996c93f6dcf9f : file1.txt");
+        myTree.addToTree("blob : 81e0268c84067377a0a1fdfb5cc996c93f6dcf9f : file1.txt", "");
         myTree.removeBlob("file1.txt");
         myTree.save();
         File checking = new File ("./objects/" + getSHA1OfString (""));
@@ -133,7 +133,7 @@ public class TreeTester
         Index i = new Index();
         i.initialize ();
         Tree myTree = new Tree ();
-        myTree.addToTree("tree : bd1ccec139dead5ee0d8c3a0499b42a7d43ac44b");
+        myTree.addToTree("tree : bd1ccec139dead5ee0d8c3a0499b42a7d43ac44b", "");
         myTree.removeTree("bd1ccec139dead5ee0d8c3a0499b42a7d43ac44b");
         myTree.save();
         File checking = new File ("./objects/" + getSHA1OfString (""));

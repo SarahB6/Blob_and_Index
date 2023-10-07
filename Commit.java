@@ -98,25 +98,34 @@ public class Commit {
         //writes the staged changes into the tree
         Tree tree = new Tree();
         File f1 = new File("./index");
+        Boolean neededToDeleteOrEdit = false;
         BufferedReader br = new BufferedReader(new FileReader("./index"));
         while(br.ready())
         {
             String line = br.readLine();
-            if(line.contains("blob : ") || line.length() < 50)
+            if(line.contains("blob : ") || line.length()<50)
             {
-                tree.addToTree(line);
+                tree.addToTree(line, oldTreeSha);
+                if(line.contains("deleted") || line.contains("edited"))
+                {
+                    neededToDeleteOrEdit = true;
+                }
             }
             else if(line.contains("tree : "))
             {
                 tree.addDirectory(line.substring(50));
             }
+            
         }
         BufferedWriter bw = new BufferedWriter(new FileWriter("./index", false));
         //clears the index
         bw.write("");
         bw.close();
         //adds previous tree
-        tree.addToTree("tree : " + oldTreeSha);
+        if(!neededToDeleteOrEdit)
+        {
+            tree.addToTree("tree : " + oldTreeSha, "");
+        }
         tree.save();
         br.close();
         return tree.getSha1();
@@ -149,7 +158,7 @@ public class Commit {
             String line = br.readLine();
             if(line.contains("blob : "))
             {
-                tree.addToTree(line);
+                tree.addToTree(line, "");
             }
             else
             {

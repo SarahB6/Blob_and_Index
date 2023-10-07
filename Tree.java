@@ -47,14 +47,14 @@ public class Tree {
             {
                 String shaOfThisBlob = SHA1FilePath("./" + name + "/" + list[i]);
                 Blob b = new Blob("./" + name + "/" + list[i]);
-                insideTree.addToTree("blob : " + shaOfThisBlob + " : "  + list[i]); //should it really be this??
+                insideTree.addToTree("blob : " + shaOfThisBlob + " : "  + list[i], ""); //should it really be this??
                 sb.append("blob : " + shaOfThisBlob + " : "  + list[i] + "\n");
                 
             }
             else
             {
                 Tree thisDirectoryTree = new Tree ();
-                insideTree.addToTree ("tree : " + thisDirectoryTree.addDirectory (name + "/" + list[i]) + " : " + list[i]);
+                insideTree.addToTree ("tree : " + thisDirectoryTree.addDirectory (name + "/" + list[i]) + " : " + list[i], "");
             }
         }
         insideTree.save();
@@ -120,7 +120,7 @@ public class Tree {
         myFile.renameTo (file2);
     }
     
-    public void addToTree (String typeAndContent) throws IOException
+    public void addToTree (String typeAndContent, String oldTree) throws IOException
     {
         if (typeAndContent.substring (0,4).equals ("blob"))
         {
@@ -133,7 +133,7 @@ public class Tree {
         }
         else if(typeAndContent.contains("*deleted*"))
         {
-            deleteObj(typeAndContent, oldTree);
+            deleteObj(typeAndContent.substring(10), oldTree);//Old Tree is empty
         }
         else if(typeAndContent.contains("*edited"))
         {
@@ -148,31 +148,62 @@ public class Tree {
     private void deleteObj(String fileName, String treeSha) throws IOException
     {
         File f = new File("./objects/" + treeSha);
+        if(treeSha.length() == 0)
+        {
+            throw new FileNotFoundException();
+        }
         if(f.exists())
         {
             BufferedReader br = new BufferedReader(new FileReader(f));
             StringBuilder thisInfo = new StringBuilder();
             String oldTreeShaOfThisTree = "";
             Boolean isInThisTree = false;
-            if(br.ready())
-            {
-                oldTreeShaOfThisTree = br.readLine();
-            }
             while(br.ready())
             {
-                String thisLine = br.readLine();
-                if(thisLine.contains(fileName))
+                String line = br.readLine();
+                if(line.contains("tree : ") && line.length() < 50)
                 {
-                    isInThisTree = true;
+                    oldTreeShaOfThisTree = line.substring(7,47);
+                    //thisInfo.append(line + "\n");
                 }
-                thisInfo.append(thisLine + "\n");
+                else
+                {
+                    if(line.contains(fileName))
+                    {
+                        isInThisTree = true;
+                    }
+                    else
+                    {
+                        thisInfo.append(line + "\n");
+                    }
+                }
                 
             }
             br.close();
-            String infoAsString = thisInfo.toString();
-            if(infoAsString.contains(fileName))
+            if(isInThisTree)
             {
-                
+                thisInfo.append("tree : " + oldTreeShaOfThisTree);
+            }
+            String[] arr = thisInfo.toString().split("\n");
+            for(int i = 0; i<arr.length; i++)
+            {
+                if (arr[i].length() == 0)
+                {
+
+                }
+                else if(arr[i].contains("blob : ") || arr[i].length() < 50)
+                {
+                    addToTree(arr[i], treeSha);
+                }
+                else
+                {
+                    addDirectory(arr[i]);
+                }
+            }
+           
+            if(!isInThisTree)
+            {
+                deleteObj(fileName, oldTreeShaOfThisTree);   
             }
 
 
