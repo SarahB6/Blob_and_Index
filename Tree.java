@@ -148,21 +148,24 @@ public class Tree {
     private void editObj(String fileName, String treeSha) throws IOException
     {
         File editedFile = new File(fileName);
+        StringBuilder thisInfo = new StringBuilder();
+        String sha = "";
         if(editedFile.isDirectory())
         {
             addDirectory(fileName); //does this work like does it make blobs and stuff
+            
         }
         else
         {
             Blob newBlob = new Blob(fileName);
-            String sha = newBlob.SHA1NameBlob(fileName);
+            sha = newBlob.SHA1NameBlob(fileName);
         }
         
         File thisF = new File("./objects/" + treeSha);
         if(thisF.exists())
         {
             BufferedReader br = new BufferedReader(new FileReader(thisF));
-            StringBuilder thisInfo = new StringBuilder();
+            
             String oldTreeShaOfThisTree = "";
             Boolean isInThisTree = false;
             while(br.ready())
@@ -171,13 +174,14 @@ public class Tree {
                 if(line.contains("tree : ") && line.length() < 50)
                 {
                     oldTreeShaOfThisTree = line.substring(7,47);
-
+                    
                 }
                 else
                 {
                     if(line.contains(fileName))
                     {
                         isInThisTree = true;
+                        addToTree("blob : " + sha + " : " + fileName, treeSha);
                     }
                     else
                     {
@@ -189,7 +193,10 @@ public class Tree {
             br.close();
             if(isInThisTree)
             {
+                if(oldTreeShaOfThisTree.length() > 0)
+                {
                 thisInfo.append("tree : " + oldTreeShaOfThisTree);
+                }
             }
 
             String[] arr = thisInfo.toString().split("\n");
