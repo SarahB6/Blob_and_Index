@@ -170,11 +170,16 @@ public class Commit {
         bw.write("");
         bw.close();
         //adds previous tree
-        //tree.addToTree("tree : " + oldTreeSha);
         tree.save();
         br.close();
         return tree.getSha1();
     }
+
+   // public void checkout(String SHA1OfCommit)
+    //{
+        //create tree with everything from that commit tree
+        
+   // }
 
 
   
