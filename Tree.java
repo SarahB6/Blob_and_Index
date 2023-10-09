@@ -212,7 +212,7 @@ public class Tree {
                 }
                 else
                 {
-                    addDirectory(arr[i]);
+                    addDirectory(arr[i].substring(50));
                 }
             }
            
@@ -258,7 +258,7 @@ public class Tree {
                 
             }
             br.close();
-            if(isInThisTree)
+            if(isInThisTree && oldTreeShaOfThisTree.length() > 0)
             {
                 thisInfo.append("tree : " + oldTreeShaOfThisTree);
             }
@@ -275,7 +275,7 @@ public class Tree {
                 }
                 else
                 {
-                    addDirectory(arr[i]);
+                    addDirectory(arr[i].substring(50));
                 }
             }
            
